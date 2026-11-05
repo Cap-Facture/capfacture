@@ -1,0 +1,1033 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Cap Facture</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Cap Facture met votre entreprise en conformité avec la facture électronique : diagnostic gratuit, modèle de facture sur mesure, installation de votre plateforme agréée et suivi mensuel.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Public+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one-page site + hash views (order, thanks, legal). Hero = promise left, a live "invoice" card right that gets stamped compliant. Ledger-ruled backgrounds echo invoice paper. */
+:root{
+  --paper:#f4f6f9; --sheet:#ffffff; --ink:#132238; --muted:#4f5d74; --line:#d6dde8; --field:#f7f9fc;
+  --accent:#1d4ed8; --accent-hover:#1840b8; --accent-ink:#ffffff; --accent-soft:#e2e9fc; --deep:#0d2257; --deep-ink:#e4eafa;
+  --ok:#17784a; --ok-soft:#dcf1e5; --warn:#9a5c00; --warn-soft:#fbedd0; --bad:#b0222b; --bad-soft:#fadfe1; --todo:#fff0a0; --todo-ink:#4d3e00;
+  --rule:rgba(29,78,216,.07);
+  --display:"Bricolage Grotesque","Avenir Next",system-ui,sans-serif;
+  --body:"Public Sans","Segoe UI",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0d1421; --sheet:#141e31; --ink:#e7edf6; --muted:#a2afc4; --line:#2a3851; --field:#0f182a;
+  --accent:#86a8ff; --accent-hover:#a3bdff; --accent-ink:#0a1325; --accent-soft:#1b2b52; --deep:#08112a; --deep-ink:#d8e1f5;
+  --ok:#62d39d; --ok-soft:#13342a; --warn:#f2b752; --warn-soft:#382a11; --bad:#ff8088; --bad-soft:#3d191d; --todo:#4a3f0c; --todo-ink:#ffe58a;
+  --rule:rgba(134,168,255,.06); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0d1421; --sheet:#141e31; --ink:#e7edf6; --muted:#a2afc4; --line:#2a3851; --field:#0f182a;
+  --accent:#86a8ff; --accent-hover:#a3bdff; --accent-ink:#0a1325; --accent-soft:#1b2b52; --deep:#08112a; --deep-ink:#d8e1f5;
+  --ok:#62d39d; --ok-soft:#13342a; --warn:#f2b752; --warn-soft:#382a11; --bad:#ff8088; --bad-soft:#3d191d; --todo:#4a3f0c; --todo-ink:#ffe58a;
+  --rule:rgba(134,168,255,.06); color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--sheet)}
+.in{max-width:1160px;margin:0 auto;padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px))}
+a{color:var(--accent)}
+h1,h2,h3{font-family:var(--display);line-height:1.1;text-wrap:balance;margin:0}
+h2{font-size:clamp(27px,3.6vw,40px);font-weight:800;letter-spacing:-.015em}
+h3{font-size:19px;font-weight:600}
+p{margin:0}
+.eyebrow{font:500 12.5px var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--accent)}
+.muted{color:var(--muted)}
+.small{font-size:14px}
+.skip{position:absolute;left:-999px;top:8px;background:var(--accent);color:var(--accent-ink);padding:8px 14px;border-radius:8px;z-index:50}
+.skip:focus{left:12px}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
+mark.todo{background:var(--todo);color:var(--todo-ink);padding:0 5px;border-radius:3px;font-family:var(--mono);font-size:.88em}
+.vh{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* buttons */
+.btn{font:600 15px var(--body);border-radius:10px;padding:12px 18px;cursor:pointer;border:1.5px solid var(--line);background:var(--sheet);color:var(--ink);display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;min-height:46px;transition:background .15s,border-color .15s,transform .15s}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{background:var(--accent-hover);border-color:var(--accent-hover)}
+.btn.sm{padding:7px 12px;font-size:14px;min-height:36px}
+.btn.block{width:100%}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn .arr{transition:transform .15s}
+.btn:hover .arr{transform:translateX(3px)}
+
+/* header */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--sheet) 92%,transparent);backdrop-filter:saturate(1.4) blur(8px);border-bottom:1px solid var(--line)}
+header.top .in{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:64px}
+.logo{font-family:var(--display);font-weight:800;font-size:22px;color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:9px;letter-spacing:-.01em}
+.logo svg{flex:none}
+.navl{display:flex;gap:22px;align-items:center;font-size:15px}
+.navl a:not(.btn){color:var(--ink);text-decoration:none;font-weight:500}
+.navl a:not(.btn):hover{color:var(--accent)}
+.menuBtn{display:none;background:none;border:1.5px solid var(--line);border-radius:9px;padding:8px 11px;font:600 14px var(--body);color:var(--ink);cursor:pointer}
+@media (max-width:860px){
+  .menuBtn{display:inline-flex}
+  .navl{display:none;position:absolute;left:0;right:0;top:100%;background:var(--sheet);border-bottom:1px solid var(--line);flex-direction:column;align-items:stretch;gap:0;padding:8px max(18px,env(safe-area-inset-right,0px)) 16px max(18px,env(safe-area-inset-left,0px))}
+  .navl.open{display:flex}
+  .navl a:not(.btn){padding:12px 0;border-bottom:1px solid var(--line)}
+  .navl .btn{margin-top:12px}
+}
+
+/* hero */
+.hero{overflow:hidden;padding-block:64px 56px;background:linear-gradient(var(--rule) 1px,transparent 1px) 0 0/100% 32px,var(--paper)}
+.hero .in{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.95fr);gap:48px;align-items:center}
+@media (max-width:900px){.hero .in{grid-template-columns:minmax(0,1fr);gap:36px}.hero{padding-block:40px}}
+.hero h1{font-size:clamp(36px,5.6vw,62px);font-weight:800;letter-spacing:-.025em}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.hero .lede{font-size:19px;color:var(--muted);max-width:52ch;margin-top:18px}
+.hero .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.reassure{display:flex;gap:8px 18px;flex-wrap:wrap;margin-top:22px;font-size:14px;color:var(--muted);padding:0;list-style:none}
+.reassure li{display:flex;gap:7px;align-items:center}
+.reassure li::before{content:"";width:16px;height:16px;border-radius:50%;background:var(--ok-soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8.2l2.2 2.2 4.8-4.8' fill='none' stroke='%2317784a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/16px no-repeat;flex:none}
+.inv{position:relative;background:#fff;color:#132238;border-radius:6px;padding:26px 24px 22px;box-shadow:0 30px 60px -30px rgba(13,34,87,.45),0 0 0 1px rgba(13,34,87,.08);font-size:13px;display:grid;gap:12px;transform:rotate(1.2deg);max-width:440px;justify-self:center;width:100%}
+.inv .r{display:flex;justify-content:space-between;gap:10px}
+.inv .t{font-family:var(--display);font-weight:800;font-size:22px;color:#1d4ed8}
+.inv .lbl{font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#56647c}
+.inv .m{font-family:var(--mono);font-size:12px}
+.inv .new{background:#e2e9fc;border-radius:3px;padding:1px 5px;box-shadow:inset 0 -2px 0 #1d4ed8}
+.inv table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.inv td{padding:6px 0;border-bottom:1px solid #e3e8f0}
+.inv td:last-child{text-align:right}
+.inv .tot{display:flex;justify-content:space-between;font-weight:700;font-size:15px;border-top:2px solid #132238;padding-top:8px}
+.stamp{position:absolute;right:22px;top:150px;font:700 13px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:#17784a;border:2.5px solid #17784a;border-radius:7px;padding:7px 11px;transform:rotate(-8deg);background:rgba(255,255,255,.85);animation:stamp .5s cubic-bezier(.2,1.6,.4,1) .9s both}
+@keyframes stamp{from{opacity:0;transform:rotate(-8deg) scale(1.8)}to{opacity:1;transform:rotate(-8deg) scale(1)}}
+.count{margin-top:16px;justify-self:center;display:flex;gap:10px;align-items:baseline;font-size:14px;color:var(--muted)}
+.count b{font-family:var(--display);font-size:28px;color:var(--ink);font-variant-numeric:tabular-nums}
+
+/* bands */
+section.band{padding-block:72px}
+@media (max-width:700px){section.band{padding-block:52px}}
+section.band.alt{background:var(--sheet);border-block:1px solid var(--line)}
+.head{display:grid;gap:10px;max-width:68ch;margin-bottom:34px}
+.head p{font-size:17px}
+.who{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;padding:0;list-style:none}
+.who li{border:1px solid var(--line);background:var(--sheet);border-radius:999px;padding:6px 13px;font-size:14px}
+.cols2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+@media (max-width:820px){.cols2{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--sheet);border:1px solid var(--line);border-radius:14px;padding:22px;display:grid;gap:12px;align-content:start;min-width:0}
+.alt .card{background:var(--paper)}
+.card ul{margin:0;padding-left:20px;display:grid;gap:7px}
+.vs .card h3{display:flex;gap:10px;align-items:center}
+.vs .tagx{font:600 11px var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:999px}
+.vs .before .tagx{background:var(--bad-soft);color:var(--bad)}
+.vs .after{border:2px solid var(--accent)}
+.vs .after .tagx{background:var(--ok-soft);color:var(--ok)}
+.vs li{padding-left:2px}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:26px;counter-reset:st}
+@media (max-width:820px){.steps{grid-template-columns:minmax(0,1fr)}}
+.step{display:grid;gap:10px;align-content:start;border-top:3px solid var(--ink);padding-top:16px}
+.step .n{font:500 12.5px var(--mono);color:var(--accent);letter-spacing:.04em}
+.step ul{margin:4px 0 0;padding-left:18px;display:grid;gap:4px;font-size:15px;color:var(--muted)}
+
+/* assistant */
+.asst{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.1fr);gap:26px;align-items:start}
+@media (max-width:960px){.asst{grid-template-columns:minmax(0,1fr)}}
+.qform{display:grid;gap:12px}
+.qtop{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+fieldset{border:1px solid var(--line);background:var(--sheet);border-radius:12px;padding:13px 15px 15px;margin:0;min-width:0}
+legend{font-weight:600;font-size:15px;padding:0 4px}
+legend span{font:500 11.5px var(--mono);color:var(--accent);margin-right:6px}
+.hint{font-size:13.5px;color:var(--muted);margin:0 0 9px}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{position:relative}
+.opt input{position:absolute;opacity:0;inset:0;cursor:pointer;margin:0;width:100%;height:100%}
+.opt span{display:inline-flex;align-items:center;min-height:38px;border:1.5px solid var(--line);border-radius:999px;padding:6px 13px;font-size:14.5px;background:var(--field);cursor:pointer;transition:border-color .12s}
+.opt:hover span{border-color:var(--accent)}
+.opt input:checked+span{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.opt input:focus-visible+span{outline:3px solid var(--accent);outline-offset:2px}
+.res{display:grid;gap:16px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 80px);max-height:calc(100vh - 100px);overflow:auto;padding:2px}
+@media (max-width:960px){.res{position:static;max-height:none;overflow:visible}}
+.res .card{background:var(--sheet);padding:18px}
+.banner{background:var(--accent-soft);border-radius:10px;padding:10px 13px;font-size:14px}
+.verdict{display:flex;gap:16px;align-items:center}
+.ring{width:84px;height:84px;flex:none}
+.ring circle{fill:none;stroke-width:9}
+.ring .bg{stroke:var(--line)}
+.ring text{font-family:var(--display);font-weight:800;font-size:25px;fill:var(--ink)}
+.ring .fg{transition:stroke-dashoffset .45s ease}
+.pill{display:inline-block;font:600 11px var(--mono);letter-spacing:.05em;text-transform:uppercase;padding:3px 9px;border-radius:999px}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}.pill.warn{background:var(--warn-soft);color:var(--warn)}.pill.bad{background:var(--bad-soft);color:var(--bad)}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.kv div{border:1px solid var(--line);border-radius:9px;padding:9px 11px;display:grid}
+.kv small{color:var(--muted);font-size:12.5px}
+.kv b{font-family:var(--display);font-size:20px;font-variant-numeric:tabular-nums}
+.ment{display:grid;margin:0;padding:0;list-style:none}
+.ment li{display:grid;grid-template-columns:auto 1fr;gap:9px;font-size:14.5px;padding:8px 0;border-bottom:1px solid var(--line)}
+.ment li:last-child{border-bottom:0}
+.tag{font:500 10.5px var(--mono);letter-spacing:.05em;text-transform:uppercase;padding:2px 6px;border-radius:4px;white-space:nowrap;align-self:start;margin-top:3px}
+.t-base{background:var(--field);color:var(--muted);border:1px solid var(--line)}.t-cas{background:var(--warn-soft);color:var(--warn)}.t-2027{background:var(--accent-soft);color:var(--accent)}.t-ia{background:var(--ok-soft);color:var(--ok)}
+.ment small{display:block;color:var(--muted);font-size:13px}
+.legendx{display:flex;gap:6px 14px;flex-wrap:wrap;font-size:13px;color:var(--muted);align-items:center}
+ol.plan{margin:0;padding-left:22px;display:grid;gap:7px;font-size:15px}
+.sheetx{background:#fff;color:#132238;border:1px solid var(--line);border-radius:5px;padding:20px;font-size:12px;display:grid;gap:12px;overflow-x:auto;box-shadow:0 18px 40px -30px rgba(13,34,87,.55)}
+.sheetx .hd{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.sheetx h4{font-family:var(--display);font-weight:800;font-size:20px;color:#1d4ed8;margin:0}
+.sheetx table{width:100%;border-collapse:collapse;min-width:380px;font-variant-numeric:tabular-nums}
+.sheetx th,.sheetx td{padding:5px 4px;border-bottom:1px solid #d6dde8;text-align:left}
+.sheetx th{font-size:10.5px;color:#4f5d74}
+.sheetx .n{text-align:right}
+.sheetx .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#4f5d74}
+.sheetx .hl{box-shadow:inset 0 -2px 0 #1d4ed8;background:#eef2fd}
+.sheetx .legal{font-size:10px;color:#4f5d74;display:grid;gap:2px}
+.aiBox{border:2px solid var(--accent)!important}
+.aiOut{font-size:15px;white-space:pre-wrap}
+.chat{display:grid;gap:8px;max-height:320px;overflow:auto}
+.msg{padding:9px 12px;border-radius:11px;font-size:15px;white-space:pre-wrap;max-width:92%}
+.msg.u{background:var(--accent);color:var(--accent-ink);justify-self:end}
+.msg.a{background:var(--field);border:1px solid var(--line)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.err{color:var(--bad);font-size:14px}
+.disc{font-size:13px;color:var(--muted)}
+.convert{background:var(--deep);color:var(--deep-ink);border-radius:14px;padding:20px;display:grid;gap:10px}
+.convert h3{color:#fff}
+.convert .btn.primary{background:#fff;color:var(--deep);border-color:#fff}
+
+/* forms */
+.form{display:grid;gap:14px}
+.fld{display:grid;gap:5px;min-width:0}
+.fld label{font-weight:600;font-size:14.5px}
+.fld .opt-l{font-weight:400;color:var(--muted)}
+.fld input,.fld select,.fld textarea,.chatIn,#caseTxt{font:16px var(--body);color:var(--ink);background:var(--field);border:1.5px solid var(--line);border-radius:9px;padding:10px 12px;width:100%;min-width:0}
+.fld input:hover,.fld textarea:hover{border-color:var(--muted)}
+.fld textarea,#caseTxt{min-height:96px;resize:vertical}
+.fld [aria-invalid="true"]{border-color:var(--bad)}
+.fld .msgx{font-size:13.5px;color:var(--bad);min-height:0}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:620px){.grid2{grid-template-columns:minmax(0,1fr)}}
+.check{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start;font-size:14.5px}
+.check input{width:20px;height:20px;margin:2px 0 0;accent-color:var(--accent)}
+.seg{display:inline-flex;border:1.5px solid var(--line);border-radius:10px;overflow:hidden;width:max-content;max-width:100%}
+.seg label{position:relative}
+.seg input{position:absolute;opacity:0;inset:0}
+.seg span{display:block;padding:9px 14px;font-size:14.5px;font-weight:600;cursor:pointer;background:var(--field);color:var(--muted)}
+.seg input:checked+span{background:var(--accent);color:var(--accent-ink)}
+.seg input:focus-visible+span{outline:3px solid var(--accent);outline-offset:-3px}
+.hp{display:none}
+
+/* offers */
+.offers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;align-items:stretch}
+@media (max-width:900px){.offers{grid-template-columns:minmax(0,1fr)}}
+.offer{background:var(--sheet);border:1px solid var(--line);border-radius:16px;padding:26px;display:grid;gap:14px;grid-template-rows:auto auto auto 1fr auto;position:relative}
+.offer.feat{border:2px solid var(--accent);box-shadow:0 24px 50px -34px rgba(29,78,216,.6)}
+.offer .flag{position:absolute;top:-12px;left:22px;background:var(--accent);color:var(--accent-ink);font:600 11px var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:999px}
+.price{font-family:var(--display);font-weight:800;font-size:40px;font-variant-numeric:tabular-nums;line-height:1}
+.price small{font:500 14px var(--body);color:var(--muted)}
+.offer ul{margin:0;padding:0;list-style:none;display:grid;gap:8px;font-size:15px;align-content:start}
+.offer li{display:grid;grid-template-columns:18px 1fr;gap:8px}
+.offer li::before{content:"";width:16px;height:16px;margin-top:4px;border-radius:50%;background:var(--accent-soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8.2l2.2 2.2 4.8-4.8' fill='none' stroke='%231d4ed8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/16px no-repeat}
+.promise{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:30px}
+@media (max-width:900px){.promise{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.promise{grid-template-columns:minmax(0,1fr)}}
+.promise div{border-top:2px solid var(--line);padding-top:12px;display:grid;gap:4px}
+.promise b{font-size:15px}
+.promise span{font-size:14px;color:var(--muted)}
+.faq{display:grid;gap:10px;max-width:840px}
+details{background:var(--sheet);border:1px solid var(--line);border-radius:12px;padding:0}
+summary{cursor:pointer;font-weight:600;padding:16px 18px;list-style:none;display:flex;justify-content:space-between;gap:12px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font:500 20px var(--mono);color:var(--accent);line-height:1}
+details[open] summary::after{content:"−"}
+details p{padding:0 18px 16px;color:var(--muted)}
+.contact{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:28px;align-items:start}
+@media (max-width:860px){.contact{grid-template-columns:minmax(0,1fr)}}
+.coord{display:grid;gap:14px}
+.coord div{display:grid;gap:2px}
+.coord small{color:var(--muted);font-size:13px}
+.copy{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-family:var(--mono);font-size:15px}
+.done{background:var(--ok-soft);color:var(--ink);border-radius:12px;padding:16px;display:grid;gap:6px}
+
+/* views */
+.view{padding-block:44px 72px}
+.view .in{max-width:860px;display:grid;gap:20px}
+.view h1{font-size:clamp(30px,4.2vw,44px);font-weight:800;letter-spacing:-.015em}
+.view h2{font-size:21px;margin-top:10px}
+.view p,.view li{max-width:74ch}
+.view ul,.view ol{margin:0;padding-left:22px;display:grid;gap:5px}
+.order{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:26px;align-items:start}
+@media (max-width:820px){.order{grid-template-columns:minmax(0,1fr)}}
+.recap{position:sticky;top:90px}
+@media (max-width:820px){.recap{position:static}}
+.recap .price{font-size:34px}
+.view .steps3{padding:0}
+[tabindex="-1"]:focus{outline:none}
+.steps3{display:flex;gap:8px;flex-wrap:wrap;font:500 12.5px var(--mono);color:var(--muted);padding:0;list-style:none}
+.steps3 li{padding:4px 10px;border-radius:999px;border:1px solid var(--line)}
+.steps3 li[aria-current="step"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+footer{background:var(--deep);color:var(--deep-ink);padding-block:44px;font-size:14px}
+footer .in{display:grid;gap:22px}
+footer a{color:#fff}
+footer .cols{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:24px}
+@media (max-width:760px){footer .cols{grid-template-columns:minmax(0,1fr)}}
+footer ul{list-style:none;margin:0;padding:0;display:grid;gap:7px}
+footer .fine{border-top:1px solid rgba(255,255,255,.15);padding-top:16px;font-size:13px;opacity:.85}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:9px;font-size:14px;z-index:40}
+</style>
+
+<a class="skip" href="#contenu">Aller au contenu</a>
+<header class="top">
+  <div class="in">
+    <a class="logo" href="#accueil" aria-label="Cap Facture, accueil">
+      <svg width="26" height="30" viewBox="0 0 26 30" aria-hidden="true"><path d="M3 2h14l6 6v20H3z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M17 2v6h6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M8 19.5l3.2 3.2L18 15.8" fill="none" stroke="#1d4ed8" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Cap Facture</a>
+    <button class="menuBtn" id="menuBtn" aria-expanded="false" aria-controls="navl">Menu</button>
+    <nav class="navl" id="navl" aria-label="Navigation principale">
+      <a href="#methode">Notre méthode</a>
+      <a href="#assistant">Diagnostic gratuit</a>
+      <a href="#offres">Tarifs</a>
+      <a href="#faq">Questions</a>
+      <a href="#contact">Contact</a>
+      <a class="btn primary sm" href="#assistant">Mon modèle gratuit</a>
+    </nav>
+  </div>
+</header>
+
+<main id="contenu" tabindex="-1">
+<div id="home">
+  <section class="hero" aria-labelledby="h-hero">
+    <div class="in">
+      <div>
+        <div class="eyebrow">Facture électronique · artisans, TPE, indépendants</div>
+        <h1 id="h-hero" style="margin-top:12px">Vos factures conformes <em>avant le 1er septembre 2027</em>, sans y passer vos soirées.</h1>
+        <p class="lede">Cap Facture analyse votre situation, vous remet un modèle de facture adapté à votre métier, installe votre plateforme agréée et surveille vos factures chaque mois. Vous gardez la tête dans votre travail.</p>
+        <div class="cta">
+          <a class="btn primary" href="#assistant">Faire mon diagnostic gratuit <span class="arr" aria-hidden="true">→</span></a>
+          <a class="btn" href="#offres">Voir les tarifs</a>
+        </div>
+        <ul class="reassure">
+          <li>3 minutes, sans inscription</li>
+          <li>Prix fixes, annoncés à l'avance</li>
+          <li>Suivi sans engagement</li>
+        </ul>
+      </div>
+      <div style="display:grid">
+        <div class="inv" aria-hidden="true">
+          <div class="r"><div><b>Durand Plomberie EI</b><br><span class="m">SIRET 000 000 000 00000</span></div><div class="t">Facture</div></div>
+          <div class="r"><div><div class="lbl">Client</div>Boulangerie Martin<br><span class="m new">SIREN 000 000 000</span></div><div style="text-align:right"><div class="lbl">Livraison</div><span class="new">18 rue Mercière</span></div></div>
+          <div><span class="new">Opération : biens et services</span></div>
+          <table><tr><td>Chauffe-eau 150 L</td><td>640,00</td></tr><tr><td>Main-d'œuvre 3 h</td><td>165,00</td></tr></table>
+          <div class="tot"><span>Total</span><span>805,00 €</span></div>
+          <div class="lbl" style="text-transform:none;letter-spacing:0">TVA non applicable, art. 293 B du CGI</div>
+          <div class="stamp">Conforme 2027</div>
+        </div>
+        <div class="count"><span>Émission obligatoire dans</span><b id="countdown">—</b></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band alt" id="probleme" aria-labelledby="h-pb">
+    <div class="in">
+      <div class="head"><div class="eyebrow">Ce qui change pour vous</div><h2 id="h-pb">Bientôt, une facture PDF envoyée par mail ne sera plus valable entre professionnels.</h2>
+        <p class="muted">La réforme concerne toutes les entreprises soumises à la TVA, y compris les micro-entreprises en franchise.</p>
+        <ul class="who" aria-label="Métiers concernés"><li>Artisans du bâtiment</li><li>Commerçants</li><li>Consultants et freelances</li><li>Professions de santé</li><li>Formateurs</li><li>Restaurateurs</li><li>Associations</li></ul>
+      </div>
+      <div class="cols2 vs">
+        <div class="card before"><h3><span class="tagx">Aujourd'hui</span>Ce que vous faites encore</h3>
+          <ul><li>Factures faites sous Word ou Excel, envoyées en PDF</li><li>Factures fournisseurs reçues par mail, rangées à la main</li><li>Mentions obligatoires vérifiées « à peu près »</li><li>Relances d'impayés quand vous y pensez</li></ul></div>
+        <div class="card after"><h3><span class="tagx">Avec Cap Facture</span>Ce que vous aurez</h3>
+          <ul><li>Factures émises et reçues par votre plateforme agréée</li><li>Modèle avec toutes vos mentions, dont les 4 nouvelles de 2027</li><li>Fiches clients complètes, SIREN compris, sans rejet</li><li>Factures rejetées et impayés surveillés chaque mois</li></ul></div>
+      </div>
+      <p class="muted small" style="margin-top:18px">En cas de manquement : 15 € d'amende par facture non conforme, jusqu'à 15 000 € par an.</p>
+    </div>
+  </section>
+
+  <section class="band" id="methode" aria-labelledby="h-me">
+    <div class="in">
+      <div class="head"><div class="eyebrow">Notre méthode</div><h2 id="h-me">Trois étapes, de votre situation actuelle à des factures conformes.</h2></div>
+      <div class="steps">
+        <div class="step"><span class="n">Étape 1 · gratuit · 3 min</span><h3>Le diagnostic de votre cas</h3><p class="muted">Vous répondez à 12 questions simples. Notre assistant identifie ce qui s'applique à vous, cas particuliers compris.</p>
+          <ul><li>Vos dates limites</li><li>L'amende que vous risquez</li><li>Votre plan d'action</li></ul></div>
+        <div class="step"><span class="n">Étape 2 · gratuit · immédiat</span><h3>Votre modèle de facture sur mesure</h3><p class="muted">Un modèle avec toutes les mentions obligatoires pour votre métier et votre statut.</p>
+          <ul><li>Aperçu à l'écran</li><li>PDF à imprimer</li><li>Tableur Excel qui calcule les totaux</li></ul></div>
+        <div class="step"><span class="n">Étape 3 · avec nous</span><h3>La mise en place et le suivi</h3><p class="muted">On s'occupe de la partie technique avec vous, puis on veille chaque mois.</p>
+          <ul><li>Choix et inscription à la plateforme agréée</li><li>Paramétrage, import des clients, facture test</li><li>Surveillance des rejets et des impayés</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band alt" id="assistant" aria-labelledby="h-as">
+    <div class="in">
+      <div class="head"><div class="eyebrow">Étapes 1 et 2 · gratuit</div><h2 id="h-as">Répondez aux questions&nbsp;: votre modèle de facture se construit sous vos yeux.</h2>
+        <p class="muted">Aucune inscription. Vos réponses restent dans votre navigateur.</p></div>
+      <div class="asst">
+        <form class="qform" id="qform" aria-label="Questions du diagnostic">
+          <div class="qtop"><span class="small muted" id="qprog" aria-live="polite"></span><button class="btn sm" type="button" id="resetQ">Effacer mes réponses</button></div>
+        </form>
+        <div class="res" aria-live="polite" aria-label="Résultat du diagnostic">
+          <div class="banner" id="exBanner">Exemple affiché : un plombier en micro-entreprise. Modifiez les réponses pour obtenir votre propre modèle.</div>
+          <div class="card">
+            <div class="verdict">
+              <svg class="ring" viewBox="0 0 100 100" role="img" aria-labelledby="scoreLbl"><title id="scoreLbl">Score de préparation</title><circle class="bg" cx="50" cy="50" r="42"/><circle class="fg" id="arc" cx="50" cy="50" r="42" stroke-linecap="round" transform="rotate(-90 50 50)" stroke-dasharray="263.9" stroke-dashoffset="263.9"/><text x="50" y="58" text-anchor="middle" id="score">0</text></svg>
+              <div><span class="pill" id="pill"></span><h3 id="vTitle" style="margin-top:6px"></h3><p class="muted small" id="vSub"></p></div>
+            </div>
+            <div class="kv">
+              <div><small>Réception obligatoire</small><b id="kRec"></b></div>
+              <div><small>Émission obligatoire</small><b id="kEm"></b></div>
+              <div><small>Amende max. / an</small><b id="kFine"></b></div>
+            </div>
+            <p class="small" id="hypo" hidden></p>
+          </div>
+          <div class="card">
+            <h3>Les mentions de votre modèle</h3>
+            <ul class="ment" id="ment"></ul>
+            <div class="legendx"><span class="tag t-2027">2027</span>nouvelle mention <span class="tag t-cas">Votre cas</span>propre à vous <span class="tag t-base">Base</span>toute facture</div>
+          </div>
+          <div class="card">
+            <h3>Aperçu de votre modèle</h3>
+            <div class="sheetx" id="specimen"></div>
+            <div class="row" id="dlRow">
+              <button class="btn primary sm" id="dlXlsx" type="button">Télécharger le modèle Excel</button>
+              <button class="btn sm" id="dlPdf" type="button">Télécharger le PDF</button>
+            </div>
+            <p class="disc">Modèle d'information : faites valider vos cas particuliers par votre expert-comptable.</p>
+          </div>
+          <div class="card">
+            <h3>Votre plan d'action</h3>
+            <ol class="plan" id="plan"></ol>
+          </div>
+          <div class="convert">
+            <h3 id="recoT">On s'en occupe pour vous</h3>
+            <p id="recoP"></p>
+            <div class="row"><a class="btn primary" id="recoBtn" href="#commande-conformite">Choisir cette offre <span class="arr" aria-hidden="true">→</span></a><a class="btn" style="background:transparent;color:#fff;border-color:rgba(255,255,255,.4)" href="#contact">Poser une question</a></div>
+          </div>
+          <div class="card aiBox" id="aiCard">
+            <div class="eyebrow">Assistant IA</div>
+            <h3>Un cas particulier ? Décrivez-le, l'IA complète votre modèle.</h3>
+            <p class="disc">Vous échangez avec une intelligence artificielle. Ses réponses sont une aide générale, pas un conseil juridique ou comptable.</p>
+            <label class="small" for="caseTxt" style="font-weight:600">Votre situation, en quelques phrases</label>
+            <textarea id="caseTxt" placeholder="Ex. : je suis kiné et je vends aussi des semelles ; certains patients sont des entreprises qui paient pour leurs salariés."></textarea>
+            <div class="row"><button class="btn primary sm" id="caseBtn" type="button">Adapter mon modèle</button><button class="btn sm" id="explainBtn" type="button">M'expliquer mon diagnostic</button><button class="btn sm" id="aiStop" type="button" hidden>Arrêter</button></div>
+            <div class="aiOut" id="aiOut" aria-live="polite"></div>
+            <div class="err" id="aiErr" role="alert"></div>
+            <h3 style="margin-top:6px;font-size:16px">Une question ?</h3>
+            <div class="chat" id="chat" aria-live="polite"></div>
+            <form class="row" id="chatForm"><label class="vh" for="chatIn">Votre question</label><input class="chatIn" type="text" id="chatIn" placeholder="Ex. : dois-je refaire mes factures d'acompte ?" style="flex:1 1 220px"><button class="btn sm" type="submit" id="chatBtn">Envoyer</button></form>
+          </div>
+          <div class="card" id="aiOff" hidden>
+            <h3>Un cas particulier ?</h3>
+            <p class="muted small">Décrivez-nous votre situation : nous complétons votre modèle et vous répondons sous 48 h ouvrées.</p>
+            <a class="btn sm" href="#contact">Nous écrire</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="offres" aria-labelledby="h-of">
+    <div class="in">
+      <div class="head"><div class="eyebrow">Étape 3 · tarifs</div><h2 id="h-of">Un prix fixe, connu à l'avance.</h2><p class="muted">Prix nets, identiques pour les professionnels et les particuliers. TVA non applicable, art. 293 B du CGI.</p></div>
+      <div class="offers">
+        <div class="offer"><h3>Diagnostic</h3><div class="price">0 €</div><p class="muted small">Pour savoir où vous en êtes.</p>
+          <ul><li>Diagnostic en ligne de votre cas</li><li>Modèle de facture en PDF et Excel</li><li>Plan d'action personnalisé</li></ul>
+          <a class="btn" href="#assistant">Commencer</a></div>
+        <div class="offer feat"><span class="flag">Le plus choisi</span><h3>Mise en conformité</h3><div class="price"><span data-price="conformite"></span> € <small>en une fois</small></div><p class="muted small">Tout est en place, testé et expliqué.</p>
+          <ul><li>Choix de la plateforme agréée adaptée à vous</li><li>Inscription et paramétrage de votre logiciel</li><li>Modèles de facture avec toutes vos mentions</li><li>Import et vérification de vos fiches clients</li><li>Facture test validée de bout en bout</li><li>1 h de prise en main en visio ou par téléphone</li></ul>
+          <a class="btn primary" href="#commande-conformite">Commander <span class="arr" aria-hidden="true">→</span></a></div>
+        <div class="offer"><h3>Suivi mensuel</h3><div class="price"><span data-price="suivi"></span> € <small>par mois</small></div><p class="muted small">Sans engagement, résiliable à tout moment.</p>
+          <ul><li>Surveillance des factures rejetées</li><li>Relance de vos impayés</li><li>Vérification de l'archivage</li><li>Mise à jour de vos modèles si la loi change</li><li>Assistance par mail sous 48 h ouvrées</li></ul>
+          <a class="btn" href="#commande-suivi">S'abonner <span class="arr" aria-hidden="true">→</span></a></div>
+      </div>
+      <div class="promise">
+        <div><b>Prix fixe</b><span>Le prix affiché est le prix payé, sans supplément.</span></div>
+        <div><b>Sans engagement</b><span>Le suivi se résilie d'un simple mail, effet fin du mois.</span></div>
+        <div><b>Réponse sous 48 h</b><span>Les jours ouvrés, par mail ou par téléphone.</span></div>
+        <div><b>Paiement sécurisé</b><span>Carte ou prélèvement, via un prestataire de paiement agréé.</span></div>
+      </div>
+      <p class="disc" style="margin-top:22px">Nous ne tenons pas votre comptabilité : cette mission est réservée aux experts-comptables. Nous travaillons avec le vôtre.</p>
+    </div>
+  </section>
+
+  <section class="band alt" id="faq" aria-labelledby="h-fq">
+    <div class="in">
+      <div class="head"><div class="eyebrow">Questions fréquentes</div><h2 id="h-fq">Vos questions, nos réponses.</h2></div>
+      <div class="faq">
+        <details><summary>Je suis micro-entrepreneur en franchise de TVA, suis-je concerné ?</summary><p>Oui. Vous devez pouvoir recevoir vos factures fournisseurs au format électronique depuis le 1er septembre 2026, et émettre les vôtres à partir du 1er septembre 2027 pour vos clients professionnels en France.</p></details>
+        <details><summary>Je ne travaille qu'avec des particuliers.</summary><p>Vous n'émettez pas de factures électroniques à des particuliers, mais vous devez transmettre les données de ces ventes à l'administration (e-reporting) et recevoir vos factures fournisseurs électroniquement.</p></details>
+        <details><summary>Qu'est-ce qu'une plateforme agréée ?</summary><p>Un prestataire immatriculé par l'administration fiscale, qui transmet vos factures électroniques à vos clients et les données à l'administration. Chaque entreprise doit en choisir une. Nous vous aidons à choisir celle qui correspond à votre activité et à votre budget.</p></details>
+        <details><summary>Mon logiciel de facturation actuel suffit-il ?</summary><p>Seulement s'il est relié à une plateforme agréée. Le diagnostic vous l'indique, et nous le vérifions avec votre éditeur pendant la mise en conformité.</p></details>
+        <details><summary>Comment se passe la mise en conformité ?</summary><p>Après votre commande, nous vous appelons sous 48 h ouvrées pour fixer un rendez-vous. Comptez ensuite une à deux semaines selon votre plateforme, puis une heure de prise en main.</p></details>
+        <details><summary>Comment payer, et comment résilier le suivi ?</summary><p>Par carte bancaire ou prélèvement SEPA, sur une page de paiement sécurisée. Le suivi est sans engagement : un mail suffit pour l'arrêter, avec effet à la fin du mois en cours.</p></details>
+        <details><summary>Puis-je changer d'avis après ma commande ?</summary><p>Si vous êtes un particulier, vous avez 14 jours pour vous rétracter. Les détails sont dans nos <a href="#cgv">conditions générales de vente</a>.</p></details>
+        <details><summary>Que faites-vous de mes données ?</summary><p>Les réponses au diagnostic restent dans votre navigateur. Les informations de commande servent uniquement à vous accompagner et à vous facturer. Détails dans notre <a href="#confidentialite">politique de confidentialité</a>.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="contact" aria-labelledby="h-ct">
+    <div class="in contact">
+      <div class="coord">
+        <div class="head" style="margin:0"><div class="eyebrow">Contact</div><h2 id="h-ct">Parlons de votre mise en conformité.</h2><p class="muted">Une question, un cas particulier, un devis : réponse sous 48 h ouvrées.</p></div>
+        <div><small>Email</small><div class="copy"><span id="mailTxt" data-cfg="email"></span><button class="btn sm" id="copyMail" type="button">Copier</button></div></div>
+        <div><small>Téléphone</small><div class="copy" data-cfg="tel"></div></div>
+        <div><small>Interlocuteur</small><div>Fabio Aluigi, fondateur</div></div>
+      </div>
+      <div class="card">
+        <form class="form" id="contactForm" name="contact" method="POST" data-netlify="true" netlify-honeypot="adresse_web" novalidate>
+          <input type="hidden" name="form-name" value="contact">
+          <p class="hp"><label>Ne pas remplir <input name="adresse_web" tabindex="-1" autocomplete="off"></label></p>
+          <div class="grid2">
+            <div class="fld"><label for="c-nom">Nom et prénom</label><input id="c-nom" name="nom" autocomplete="name" required aria-describedby="c-nom-e"><span class="msgx" id="c-nom-e"></span></div>
+            <div class="fld"><label for="c-ent">Entreprise <span class="opt-l">(facultatif)</span></label><input id="c-ent" name="entreprise" autocomplete="organization"></div>
+          </div>
+          <div class="grid2">
+            <div class="fld"><label for="c-mail">Email</label><input id="c-mail" name="email" type="email" autocomplete="email" required aria-describedby="c-mail-e"><span class="msgx" id="c-mail-e"></span></div>
+            <div class="fld"><label for="c-tel">Téléphone <span class="opt-l">(facultatif)</span></label><input id="c-tel" name="telephone" type="tel" autocomplete="tel"></div>
+          </div>
+          <div class="fld"><label for="c-msg">Votre message</label><textarea id="c-msg" name="message" required aria-describedby="c-msg-e"></textarea><span class="msgx" id="c-msg-e"></span></div>
+          <input type="hidden" name="diagnostic" id="c-diag">
+          <label class="check" for="c-joint"><input type="checkbox" id="c-joint" checked><span>Joindre le résumé de mon diagnostic à ma demande</span></label>
+          <p class="disc">Vos informations servent uniquement à vous répondre. Voir notre <a href="#confidentialite">politique de confidentialité</a>.</p>
+          <button class="btn primary" type="submit" id="c-send">Envoyer mon message</button>
+          <div id="c-done" role="status"></div>
+        </form>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ORDER -->
+<section class="view" id="commande" hidden aria-labelledby="h-cmd">
+  <div class="in">
+    <a href="#offres">← Retour aux tarifs</a>
+    <ol class="steps3" aria-label="Étapes de la commande"><li aria-current="step">1. Vos informations</li><li>2. Paiement sécurisé</li><li>3. Rendez-vous sous 48 h</li></ol>
+    <h1 id="h-cmd">Votre commande</h1>
+    <div class="order">
+      <form class="card form" id="orderForm" name="commande" method="POST" data-netlify="true" netlify-honeypot="adresse_web" novalidate>
+        <input type="hidden" name="form-name" value="commande">
+        <input type="hidden" name="offre" id="o-offre">
+        <input type="hidden" name="reference" id="o-ref">
+        <p class="hp"><label>Ne pas remplir <input name="adresse_web" tabindex="-1" autocomplete="off"></label></p>
+        <fieldset style="border:0;padding:0;background:none"><legend class="small" style="padding:0;margin-bottom:8px">Vous êtes</legend>
+          <div class="seg"><label><input type="radio" name="type" value="professionnel" id="o-pro" checked><span>Un professionnel</span></label><label><input type="radio" name="type" value="particulier" id="o-part"><span>Un particulier</span></label></div>
+        </fieldset>
+        <div class="grid2">
+          <div class="fld"><label for="o-nom">Nom et prénom</label><input id="o-nom" name="nom" autocomplete="name" required aria-describedby="o-nom-e"><span class="msgx" id="o-nom-e"></span></div>
+          <div class="fld" id="o-ent-w"><label for="o-ent">Entreprise</label><input id="o-ent" name="entreprise" autocomplete="organization" aria-describedby="o-ent-e"><span class="msgx" id="o-ent-e"></span></div>
+        </div>
+        <div class="grid2">
+          <div class="fld"><label for="o-mail">Email</label><input id="o-mail" name="email" type="email" autocomplete="email" required aria-describedby="o-mail-e"><span class="msgx" id="o-mail-e"></span></div>
+          <div class="fld"><label for="o-tel">Téléphone</label><input id="o-tel" name="telephone" type="tel" autocomplete="tel" required aria-describedby="o-tel-e"><span class="msgx" id="o-tel-e"></span></div>
+        </div>
+        <div class="grid2">
+          <div class="fld" id="o-siren-w"><label for="o-siren">SIREN <span class="opt-l">(9 chiffres, facultatif)</span></label><input id="o-siren" name="siren" inputmode="numeric" aria-describedby="o-siren-e"><span class="msgx" id="o-siren-e"></span></div>
+          <div class="fld"><label for="o-adr">Adresse de facturation</label><input id="o-adr" name="adresse" autocomplete="street-address" required aria-describedby="o-adr-e"><span class="msgx" id="o-adr-e"></span></div>
+        </div>
+        <div class="fld"><label for="o-msg">Précisions <span class="opt-l">(facultatif)</span></label><textarea id="o-msg" name="precisions" placeholder="Votre logiciel actuel, vos disponibilités pour le rendez-vous…"></textarea></div>
+        <input type="hidden" name="diagnostic" id="o-diag">
+        <label class="check" for="o-cgv"><input type="checkbox" id="o-cgv" name="cgv" value="acceptees" required aria-describedby="o-cgv-e"><span>J'ai lu et j'accepte les <a href="#cgv">conditions générales de vente</a>.</span></label>
+        <span class="msgx err" id="o-cgv-e"></span>
+        <label class="check" for="o-exec" id="o-exec-w" hidden><input type="checkbox" id="o-exec" name="execution_immediate" value="demandee"><span>Je demande que la prestation commence avant la fin du délai de rétractation de 14 jours. Si je me rétracte, je paierai la part déjà réalisée ; une fois la prestation entièrement réalisée, je ne pourrai plus me rétracter.</span></label>
+        <button class="btn primary block" type="submit" id="o-pay">Commander avec obligation de paiement</button>
+        <p class="disc" id="o-note">Vous allez être redirigé vers une page de paiement sécurisée. Nous ne voyons jamais vos coordonnées bancaires.</p>
+        <div id="o-done" role="status"></div>
+      </form>
+      <aside class="card recap" aria-label="Récapitulatif">
+        <div class="eyebrow">Récapitulatif</div>
+        <h3 id="r-t"></h3>
+        <div class="price"><span id="r-p"></span> € <small id="r-per"></small></div>
+        <ul id="r-l" style="padding-left:20px;margin:0;display:grid;gap:5px;font-size:15px"></ul>
+        <p class="disc">TVA non applicable, art. 293 B du CGI. Prix total, sans frais supplémentaires.</p>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- THANKS -->
+<section class="view" id="merci" hidden aria-labelledby="h-me2">
+  <div class="in">
+    <div class="done"><div class="eyebrow" style="color:var(--ok)">Commande confirmée</div><h1 id="h-me2">Merci, c'est parti.</h1>
+      <p>Votre paiement est bien reçu. Vous recevez un reçu par email. Nous vous appelons sous 48 h ouvrées pour fixer le premier rendez-vous.</p></div>
+    <h2>En attendant</h2>
+    <ul><li>Préparez la liste de vos clients professionnels, avec leur SIREN si vous l'avez.</li><li>Notez le nom de votre logiciel de facturation actuel, s'il y en a un.</li><li>Gardez votre modèle de facture gratuit sous la main : nous partirons de lui.</li></ul>
+    <a class="btn" href="#accueil">Retour à l'accueil</a>
+  </div>
+</section>
+
+<!-- LEGAL -->
+<article class="view" id="mentions-legales" hidden aria-labelledby="h-ml"><div class="in">
+  <a href="#accueil">← Retour au site</a>
+  <h1 id="h-ml">Mentions légales</h1>
+  <p class="muted small">Articles 6-III et 19 de la loi n° 2004-575 du 21 juin 2004 pour la confiance dans l'économie numérique.</p>
+  <h2>Éditeur du site</h2>
+  <ul>
+    <li>Fabio ALUIGI EI, nom commercial Cap Facture</li>
+    <li>Entreprise individuelle, régime de la micro-entreprise</li>
+    <li>Adresse : <span data-cfg="adresse"></span></li>
+    <li>SIREN : <span data-cfg="siren"></span> · SIRET : <span data-cfg="siret"></span></li>
+    <li>Immatriculée au Registre national des entreprises</li>
+    <li>TVA non applicable, art. 293 B du CGI</li>
+    <li>Email : <span data-cfg="email"></span> · Téléphone : <span data-cfg="tel"></span></li>
+    <li>Directeur de la publication : Fabio Aluigi</li>
+  </ul>
+  <h2>Hébergeur</h2>
+  <p data-cfg="hebergeur"></p>
+  <h2>Propriété intellectuelle</h2>
+  <p>Les textes, visuels et outils de ce site appartiennent à l'éditeur. Toute reproduction sans autorisation écrite est interdite. Les modèles de facture générés par l'assistant peuvent être librement utilisés par le visiteur pour son entreprise.</p>
+  <h2>Intelligence artificielle</h2>
+  <p>Le site peut proposer un assistant fondé sur l'intelligence artificielle, signalé comme tel à chaque utilisation. Ses réponses sont une information générale : elles ne remplacent ni une consultation juridique, ni l'intervention d'un expert-comptable.</p>
+  <h2>Responsabilité</h2>
+  <p>Les informations sur la réforme de la facturation électronique sont tenues à jour avec soin mais peuvent évoluer. Seules les sources officielles (impots.gouv.fr, legifrance.gouv.fr) font foi.</p>
+</div></article>
+
+<article class="view" id="confidentialite" hidden aria-labelledby="h-cf"><div class="in">
+  <a href="#accueil">← Retour au site</a>
+  <h1 id="h-cf">Politique de confidentialité</h1>
+  <p class="muted small">Règlement (UE) 2016/679 (RGPD) et loi Informatique et Libertés. Dernière mise à jour : <span class="upd"></span>.</p>
+  <h2>Responsable du traitement</h2>
+  <p>Fabio ALUIGI EI (Cap Facture), <span data-cfg="adresse"></span>, <span data-cfg="email"></span>.</p>
+  <h2>Ce que nous collectons, pourquoi, combien de temps</h2>
+  <ul>
+    <li><strong>Diagnostic</strong> : vos réponses sont traitées dans votre navigateur et ne nous sont pas transmises, sauf si vous choisissez de les joindre à un message ou à une commande.</li>
+    <li><strong>Messages de contact</strong> : nom, email, téléphone, entreprise, message. Pour vous répondre (mesures précontractuelles). Conservés 3 ans après le dernier contact.</li>
+    <li><strong>Commandes</strong> : identité, coordonnées, entreprise, SIREN, adresse de facturation. Pour exécuter la prestation et vous facturer (contrat, obligation légale). Conservés pendant la relation, puis 10 ans pour les pièces comptables (article L123-22 du Code de commerce).</li>
+    <li><strong>Assistant IA</strong>, s'il est proposé : le texte que vous saisissez est envoyé au fournisseur du modèle d'IA, <span data-cfg="fournisseurIA"></span>, uniquement quand vous lancez l'assistant. N'y saisissez pas de données sensibles ni de données de tiers.</li>
+  </ul>
+  <h2>Destinataires</h2>
+  <ul>
+    <li>Notre hébergeur, qui reçoit aussi les formulaires du site : <span data-cfg="hebergeurCourt"></span>.</li>
+    <li>Notre prestataire de paiement, <span data-cfg="paiement"></span>, qui traite vos données bancaires sous sa propre responsabilité. Nous n'avons jamais accès à votre numéro de carte.</li>
+    <li>Pour nos clients, la plateforme agréée qu'ils choisissent.</li>
+  </ul>
+  <p>Certains prestataires sont situés hors de l'Union européenne. Ces transferts sont encadrés par une décision d'adéquation de la Commission européenne ou par ses clauses contractuelles types.</p>
+  <h2>Polices d'écriture</h2>
+  <p>Ce site charge ses polices depuis Google Fonts : votre adresse IP est transmise à Google à cette occasion.</p>
+  <h2>Vos droits</h2>
+  <p>Vous pouvez accéder à vos données, les rectifier, les effacer, en limiter le traitement, vous y opposer, demander leur portabilité et retirer votre consentement à tout moment. Écrivez à <span data-cfg="email"></span>. Vous pouvez aussi saisir la CNIL (cnil.fr).</p>
+</div></article>
+
+<article class="view" id="cookies" hidden aria-labelledby="h-ck"><div class="in">
+  <a href="#accueil">← Retour au site</a>
+  <h1 id="h-ck">Cookies</h1>
+  <p>Ce site ne dépose aucun cookie publicitaire ni de mesure d'audience, et n'utilise aucun traceur soumis à consentement. C'est pourquoi aucun bandeau cookies ne s'affiche.</p>
+  <p>La page de paiement est hébergée par notre prestataire de paiement, qui utilise ses propres cookies, indispensables à la sécurité de la transaction.</p>
+</div></article>
+
+<article class="view" id="cgv" hidden aria-labelledby="h-cg"><div class="in">
+  <a href="#accueil">← Retour au site</a>
+  <h1 id="h-cg">Conditions générales de vente</h1>
+  <p class="muted small">En vigueur au <span class="upd"></span>. Applicables aux prestations vendues par Fabio ALUIGI EI (Cap Facture), SIREN <span data-cfg="siren"></span>, <span data-cfg="adresse"></span>, à des professionnels comme à des consommateurs.</p>
+  <h2>1. Objet</h2><p>Ces conditions encadrent les prestations d'accompagnement à la facturation électronique : mise en conformité (prestation unique) et suivi mensuel (abonnement). Elles ne comprennent ni la tenue de comptabilité, ni le conseil juridique.</p>
+  <h2>2. Prix</h2><p>Mise en conformité : <span data-price="conformite"></span> €. Suivi mensuel : <span data-price="suivi"></span> € par mois. Les prix sont nets : TVA non applicable, art. 293 B du CGI. Le prix applicable est celui affiché au moment de la commande.</p>
+  <h2>3. Commande</h2><p>Le client remplit le formulaire de commande, accepte les présentes conditions, puis confirme sa commande avec obligation de paiement. La commande est définitive à la réception du paiement. Un récapitulatif est adressé par email.</p>
+  <h2>4. Paiement</h2><p>Le paiement s'effectue en ligne par carte bancaire ou prélèvement SEPA, via le prestataire <span data-cfg="paiement"></span>. La mise en conformité est payable à la commande. Le suivi est payable chaque mois, d'avance, à la date anniversaire de la souscription. En cas de retard de paiement, des pénalités au taux de 3 fois le taux d'intérêt légal sont dues et, pour les clients professionnels, une indemnité forfaitaire de 40 € pour frais de recouvrement (articles L441-10 et D441-5 du Code de commerce).</p>
+  <h2>5. Exécution</h2><p>Le prestataire contacte le client sous 48 heures ouvrées après la commande pour planifier la mise en conformité, réalisée en principe sous 15 jours ouvrés selon la disponibilité du client et de sa plateforme agréée.</p>
+  <h2>6. Durée et résiliation du suivi</h2><p>Le suivi est sans engagement de durée. Il se renouvelle chaque mois et peut être résilié à tout moment par email à <span data-cfg="email"></span>, avec effet à la fin de la période mensuelle en cours. Aucun mois commencé n'est remboursé, sauf exercice du droit de rétractation.</p>
+  <h2>7. Droit de rétractation (consommateurs)</h2><p>Le client consommateur dispose de 14 jours à compter de la conclusion du contrat pour se rétracter, sans motif ni pénalité (article L221-18 du Code de la consommation), en adressant le formulaire ci-dessous ou toute déclaration sans ambiguïté par email. Le remboursement intervient sous 14 jours, par le même moyen de paiement. Si le client a demandé expressément que la prestation commence avant la fin de ce délai, il paie la part déjà exécutée jusqu'à sa rétractation (article L221-25). Il perd son droit de rétractation une fois la prestation entièrement exécutée avec son accord exprès (article L221-28).</p>
+  <h2>8. Obligations des parties</h2><p>Le prestataire est tenu d'une obligation de moyens. Le client fournit des informations exactes et complètes, donne accès aux outils nécessaires et reste responsable de ses déclarations fiscales et du contenu de ses factures.</p>
+  <h2>9. Responsabilité</h2><p>Pour les clients professionnels, la responsabilité du prestataire est limitée au montant payé au titre de la prestation concernée sur les 12 derniers mois. Cette limite ne s'applique pas aux consommateurs.</p>
+  <h2>10. Données personnelles</h2><p>Voir la <a href="#confidentialite">politique de confidentialité</a>.</p>
+  <h2>11. Réclamations et médiation (consommateurs)</h2><p>Toute réclamation peut être adressée à <span data-cfg="email"></span>. À défaut de solution amiable, le consommateur peut recourir gratuitement au médiateur de la consommation : <span data-cfg="mediateur"></span> (article L612-1 du Code de la consommation).</p>
+  <h2>12. Droit applicable</h2><p>Les présentes conditions sont soumises au droit français. Pour les clients professionnels, tout litige relève des tribunaux de <span data-cfg="villeTribunal"></span>.</p>
+  <h2>Formulaire de rétractation</h2>
+  <div class="card small">À l'attention de Fabio ALUIGI EI (Cap Facture), <span data-cfg="adresse"></span>, <span data-cfg="email"></span> :<br>Je vous notifie par la présente ma rétractation du contrat portant sur la prestation ci-dessous :<br>Commandée le : … · Nom du consommateur : … · Adresse du consommateur : …<br>Date, et signature en cas d'envoi papier : …</div>
+</div></article>
+</main>
+
+<footer>
+  <div class="in">
+    <div class="cols">
+      <div><b style="font-family:var(--display);font-size:20px;color:#fff">Cap Facture</b><p style="margin-top:6px">Mise en conformité facture électronique pour les artisans, TPE et indépendants.</p></div>
+      <div><ul><li><a href="#methode">Notre méthode</a></li><li><a href="#assistant">Diagnostic gratuit</a></li><li><a href="#offres">Tarifs</a></li><li><a href="#contact">Contact</a></li></ul></div>
+      <div><ul><li><a href="#mentions-legales">Mentions légales</a></li><li><a href="#cgv">Conditions générales de vente</a></li><li><a href="#confidentialite">Confidentialité</a></li><li><a href="#cookies">Cookies</a></li></ul></div>
+    </div>
+    <div class="fine">© <span id="yr"></span> Fabio ALUIGI EI · Cap Facture · SIREN <span data-cfg="siren"></span>. Informations sur la réforme issues d'impots.gouv.fr et service-public.fr ; elles ne remplacent pas l'avis d'un professionnel.</div>
+  </div>
+</footer>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+/* =====================================================================
+   CONFIGURATION : la seule partie à modifier.
+   Laissez "" pour une information pas encore connue : elle s'affiche
+   en jaune « à compléter » sur le site.
+   ===================================================================== */
+const CFG={
+  email:"",                 // ex. "contact@cap-facture.fr" ou "capfacture.contact@gmail.com"
+  tel:"06 13 35 07 83",
+  adresse:"",               // adresse de l'entreprise (domicile ou domiciliation)
+  siren:"",                 // 9 chiffres, après immatriculation
+  siret:"",                 // 14 chiffres
+  hebergeur:"",             // ex. "Netlify, Inc. – adresse et téléphone indiqués sur netlify.com"
+  hebergeurCourt:"",        // ex. "Netlify (États-Unis)"
+  paiement:"",              // ex. "Stripe Payments Europe, Ltd. (Irlande)"
+  mediateur:"",             // nom, adresse et site du médiateur de la consommation
+  villeTribunal:"",         // ex. "Lyon"
+  fournisseurIA:"Anthropic (États-Unis)",
+  prix:{conformite:390,suivi:29},
+  // Liens de paiement (Stripe Payment Links). Vides = commande sans paiement en ligne :
+  // la demande nous est envoyée et nous adressons le lien de paiement par email.
+  liensPaiement:{conformite:"",suivi:""}
+};
+/* ===================================================================== */
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const num=n=>{const v=Math.round((+n||0)*100)/100;const [i,d]=v.toFixed(2).split(".");return i.replace(/\B(?=(\d{3})+(?!\d))/g," ")+","+d};
+const num0=n=>num(n).replace(/,00$/,"");
+function toast(t){const el=$("toast");el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,3000)}
+const today=new Date();today.setHours(0,0,0,0);
+const D26=new Date(2026,8,1),D27=new Date(2027,8,1);
+const days=d=>Math.round((d-today)/864e5);
+const fd=d=>d.toLocaleDateString("fr-FR",{day:"numeric",month:"short",year:"numeric"});
+let standalone=false;
+
+/* ---------- fill config ---------- */
+const CFG_LABEL={email:"email de contact",tel:"téléphone",adresse:"adresse de l'entreprise",siren:"SIREN",siret:"SIRET",hebergeur:"nom, adresse et téléphone de l'hébergeur",hebergeurCourt:"hébergeur",paiement:"prestataire de paiement",mediateur:"médiateur de la consommation",villeTribunal:"ville",fournisseurIA:"fournisseur IA"};
+document.querySelectorAll("[data-cfg]").forEach(el=>{const k=el.dataset.cfg;const v=CFG[k];el.innerHTML=v?esc(v):`<mark class="todo">[à compléter : ${CFG_LABEL[k]||k}]</mark>`});
+document.querySelectorAll("[data-price]").forEach(el=>el.textContent=num0(CFG.prix[el.dataset.price]));
+$("yr").textContent=today.getFullYear();document.querySelectorAll(".upd").forEach(e=>e.textContent=fd(today));
+$("countdown").textContent=days(D27)>0?days(D27)+" jours":"en vigueur";
+
+/* ---------- menu ---------- */
+$("menuBtn").onclick=()=>{const o=$("navl").classList.toggle("open");$("menuBtn").setAttribute("aria-expanded",o)};
+$("navl").addEventListener("click",e=>{if(e.target.closest("a")){$("navl").classList.remove("open");$("menuBtn").setAttribute("aria-expanded","false")}});
+
+/* ---------------- questions ---------------- */
+const Q=[
+ {id:"activite",t:"Votre activité",o:[["btp","Artisan du bâtiment"],["artisan","Autre artisan"],["commerce","Commerce, vente de produits"],["services","Services, conseil, numérique"],["sante","Santé (kiné, infirmier…)"],["formation","Formation"],["liberal","Autre profession libérale"],["restauration","Restauration, hôtellerie"],["association","Association"]],d:"btp"},
+ {id:"statut",t:"Votre statut",o:[["micro","Micro-entreprise"],["ei","Entreprise individuelle au réel"],["societe","Société (SARL, SAS, EURL…)"],["asso","Association"]],d:"micro"},
+ {id:"tva",t:"Votre TVA",h:"Si vous hésitez, choisissez « Je ne sais pas » : l'assistant déduit le cas le plus probable.",o:[["franchise","Franchise (pas de TVA)"],["normal","Je facture la TVA"],["exonere","Activité exonérée"],["nsp","Je ne sais pas"]],d:"franchise"},
+ {id:"clients",multi:true,t:"Vos clients",h:"Plusieurs choix possibles.",o:[["pro_fr","Entreprises en France"],["part","Particuliers"],["pro_ue","Entreprises dans l'UE"],["hors_ue","Clients hors UE"]],d:["pro_fr","part"]},
+ {id:"soustrait",t:"Travaillez-vous en sous-traitance pour d'autres entreprises du bâtiment ?",show:a=>a.activite==="btp",o:[["non","Non"],["oui","Oui"]],d:"non"},
+ {id:"vente",t:"Que facturez-vous ?",o:[["services","Des prestations"],["biens","Des produits"],["mixte","Les deux"]],d:"mixte"},
+ {id:"acomptes",t:"Demandez-vous des acomptes ?",o:[["non","Non"],["oui","Oui"]],d:"oui"},
+ {id:"debits",t:"Avez-vous opté pour la TVA sur les débits ?",show:a=>a.tvaEff==="normal"&&a.vente!=="biens",h:"Option rare, choisie auprès de votre service des impôts.",o:[["non","Non"],["oui","Oui"],["nsp","Je ne sais pas"]],d:"non"},
+ {id:"taille",t:"Taille de l'entreprise",o:[["tpe","Moins de 250 salariés"],["eti","250 salariés ou plus"]],d:"tpe"},
+ {id:"outil",t:"Comment faites-vous vos factures aujourd'hui ?",o:[["papier","À la main"],["word","Word ou Excel"],["logiciel","Un logiciel"],["pa","Logiciel relié à une plateforme agréée"]],d:"word"},
+ {id:"pa",t:"Avez-vous choisi votre plateforme agréée ?",o:[["non","Non"],["nsp","Je ne sais pas ce que c'est"],["oui","Oui"]],d:"nsp"},
+ {id:"volume",t:"Factures émises par mois",o:[["10","Moins de 20"],["50","20 à 100"],["150","Plus de 100"]],d:"10"}
+];
+const form=$("qform");
+form.insertAdjacentHTML("beforeend",Q.map((q,i)=>`<fieldset id="fs-${q.id}"><legend><span>${String(i+1).padStart(2,"0")}</span>${q.t}</legend>${q.h?`<p class="hint" id="h-${q.id}">${q.h}</p>`:""}<div class="opts" ${q.h?`aria-describedby="h-${q.id}"`:""}>${q.o.map(([v,l])=>`<label class="opt"><input type="${q.multi?"checkbox":"radio"}" id="${q.id}-${v}" name="${q.id}" value="${v}" ${(q.multi?q.d.includes(v):q.d===v)?"checked":""}><span>${l}</span></label>`).join("")}</div></fieldset>`).join(""));
+
+function read(){
+  const a={};Q.forEach(q=>{a[q.id]=q.multi?[...form.querySelectorAll(`input[name="${q.id}"]:checked`)].map(i=>i.value):(form.querySelector(`input[name="${q.id}"]:checked`)?.value)});
+  const def={activite:"services",statut:"micro",tva:"nsp",vente:"services",acomptes:"non",taille:"tpe",outil:"word",pa:"nsp",volume:"10",soustrait:"non",debits:"non"};
+  a.missing=Q.filter(q=>!q.multi&&!a[q.id]&&(!q.show||true)).length;
+  Object.keys(def).forEach(k=>{if(!a[k])a[k]=def[k]});
+  let t=a.tva,hyp="";
+  if(t==="nsp"){
+    if(a.statut==="asso"||a.activite==="association"){t="exonere";hyp="Hypothèse : association exonérée de TVA pour ses activités non lucratives."}
+    else if(["sante","formation"].includes(a.activite)){t="exonere";hyp="Hypothèse : activité exonérée de TVA (santé ou formation). À confirmer."}
+    else if(a.statut==="micro"){t="franchise";hyp="Hypothèse : franchise en base de TVA, le cas le plus fréquent en micro-entreprise. À confirmer."}
+    else {t="normal";hyp="Hypothèse : vous facturez la TVA. À confirmer."}
+  }
+  a.tvaEff=t;a.hyp=hyp;
+  if(!a.clients.length)a.clients=["pro_fr"];
+  return a;
+}
+
+/* ---------------- rule engine ---------------- */
+function engine(a){
+  const M=[];const add=(cat,t,why)=>M.push({cat,t,why});
+  const pro=a.clients.includes("pro_fr"),part=a.clients.includes("part"),ue=a.clients.includes("pro_ue"),hue=a.clients.includes("hors_ue");
+  const tv=a.tvaEff;const btpST=a.activite==="btp"&&a.soustrait==="oui";
+  add("base","Numéro de facture unique, suivant une séquence chronologique continue","Sans trou ni doublon, y compris pour les avoirs.");
+  add("base","Date d'émission, et date de la vente ou de la prestation si elle diffère","");
+  if(a.statut==="micro"||a.statut==="ei") add("cas","Votre nom suivi de « EI » ou « Entrepreneur individuel », adresse, SIREN","Obligatoire pour les entrepreneurs individuels depuis 2022.");
+  else if(a.statut==="societe") add("cas","Dénomination, forme juridique, montant du capital social, adresse du siège, SIREN et ville d'immatriculation au RCS","Mentions propres aux sociétés.");
+  else add("cas","Nom de l'association, adresse du siège, SIREN","");
+  if(["btp","artisan"].includes(a.activite)) add("cas","Votre assurance professionnelle : assureur, numéro de contrat, zone couverte","Obligatoire pour les artisans tenus de s'assurer, dont la décennale dans le bâtiment.");
+  if(tv==="normal"||ue) add("base","Votre numéro de TVA intracommunautaire","");
+  add("base","Nom et adresse de facturation du client","");
+  if(ue) add("cas","Numéro de TVA intracommunautaire du client européen","Indispensable pour justifier l'absence de TVA française.");
+  add("base","Désignation précise, quantité et prix unitaire hors taxes de chaque ligne","");
+  add("base","Réductions accordées, le cas échéant","");
+  if(tv==="franchise"){add("cas","Mention « TVA non applicable, art. 293 B du CGI » et total sans TVA","Vous êtes en franchise : vous ne facturez pas de TVA.")}
+  else if(tv==="exonere"){
+    const art={sante:"art. 261-4-1° du CGI",formation:"art. 261-4-4° a du CGI",association:"art. 261-7-1° b du CGI"}[a.activite]||(a.statut==="asso"?"art. 261-7-1° b du CGI":"[article du CGI à préciser]");
+    add("cas",`Mention « Exonération de TVA, ${art} »`,"Chaque exonération doit citer son texte.");
+  } else {
+    add("base","Taux de TVA de chaque ligne, montant de TVA par taux, totaux HT et TTC","");
+    if(a.activite==="btp"&&part) add("cas","Taux réduit de 10 % ou 5,5 % pour les travaux dans un logement de plus de 2 ans, avec justificatif","À vérifier chantier par chantier.");
+  }
+  if(btpST) add("cas","Sous-traitance BTP : pas de TVA facturée, mention « Autoliquidation » (art. 283-2 nonies du CGI)","C'est l'entreprise principale qui déclare la TVA.");
+  if(ue) add("cas",a.vente==="biens"?"Vente à une entreprise de l'UE : « Exonération de TVA, art. 262 ter I du CGI »":a.vente==="services"?"Prestation pour une entreprise de l'UE : mention « Autoliquidation »":"Entreprise de l'UE : « Autoliquidation » pour les services, « Exonération de TVA, art. 262 ter I du CGI » pour les biens","");
+  if(hue) add("cas",a.vente==="biens"?"Export hors UE : « Exonération de TVA, art. 262 I du CGI »":"Client hors UE : « TVA non applicable, art. 259-1 du CGI » (prestations aux entreprises)","");
+  if(a.acomptes==="oui") add("cas","Facture d'acompte à chaque versement, puis facture de solde qui rappelle les acomptes déjà facturés","La TVA est due sur l'acompte pour les prestations.");
+  if(pro){
+    add("2027","SIREN de votre client professionnel","Sans lui, la plateforme rejette la facture.");
+    add("2027","Adresse de livraison ou d'intervention, si elle diffère de l'adresse de facturation","");
+    add("2027",`Nature de l'opération : ${{services:"prestation de services",biens:"livraison de biens",mixte:"biens et services"}[a.vente]}`,"");
+    if(a.debits==="oui"&&tv==="normal"&&a.vente!=="biens") add("2027","Mention « Option pour le paiement de la TVA d'après les débits »","");
+  }
+  add("base","Date d'échéance et taux des pénalités de retard","");
+  if(pro||ue||hue) add("base","Indemnité forfaitaire de 40 € pour frais de recouvrement (clients professionnels)","");
+  add("base","Conditions d'escompte, ou « Pas d'escompte pour paiement anticipé »","");
+  if(a.activite==="restauration"&&part) add("cas","Particuliers : note remise pour toute prestation d'au moins 25 € TTC, facture si le client la demande","");
+  const emDate=a.taille==="eti"?D26:D27;
+  const scope=tv==="exonere"&&(a.statut==="asso"||a.activite==="association")?"asso":"in";
+  let s=0;s+={papier:0,word:5,logiciel:18,pa:35}[a.outil];s+={non:0,nsp:0,oui:30}[a.pa];s+=a.outil==="pa"||a.outil==="logiciel"?15:0;s+=a.statut!=="micro"?5:8;s+=a.hyp?0:7;s=Math.min(100,s);
+  const fine=pro?Math.min(15000,(+a.volume)*12*15):0;
+  const plan=[];
+  if(a.pa!=="oui") plan.push("Choisir votre plateforme agréée et vous y inscrire.");
+  plan.push(days(D26)<=0?"Recevoir dès maintenant vos factures fournisseurs via cette plateforme : c'est déjà obligatoire.":"Préparer la réception de vos factures fournisseurs via la plateforme (1er septembre 2026).");
+  if(a.outil==="papier"||a.outil==="word") plan.push("Passer à un logiciel de facturation relié à la plateforme.");
+  else if(a.outil==="logiciel") plan.push("Faire confirmer par votre éditeur que le logiciel est compatible avec une plateforme agréée.");
+  if(pro) plan.push("Compléter le SIREN de chacun de vos clients professionnels.");
+  plan.push("Utiliser le modèle ci-dessus pour toutes vos factures, dès maintenant.");
+  if(part||hue||ue) plan.push(`Préparer l'e-reporting de vos ventes ${[part&&"aux particuliers",(ue||hue)&&"à l'étranger"].filter(Boolean).join(" et ")}.`);
+  plan.push("Archiver vos factures 10 ans dans un espace sécurisé.");
+  plan.push("Faire valider vos cas particuliers par votre expert-comptable.");
+  const needSetup=a.outil==="papier"||a.outil==="word"||a.pa!=="oui";
+  let cls,pill,title,sub;
+  if(scope==="asso"){cls="warn";pill="À vérifier";title="Vous êtes peut-être hors du champ de la réforme";sub="Une association non assujettie à la TVA n'est pas concernée pour ses activités non lucratives. Ses activités lucratives le sont."}
+  else if(s>=70){cls="ok";pill="Bien avancé";title="Il vous reste quelques réglages";sub="Votre outil est prêt : vérifiez vos modèles et vos fiches clients."}
+  else if(s>=35){cls="warn";pill="À compléter";title="Vous avez les bases, pas encore le circuit";sub=days(emDate)>0?`Il vous reste ${days(emDate)} jours pour émettre en électronique.`:"Votre date d'émission est passée."}
+  else {cls="bad";pill="Non conforme";title="Vous n'êtes pas encore prêt";sub=days(D26)<=0?"La réception électronique est déjà obligatoire pour vous.":`Il vous reste ${days(D26)} jours avant la réception obligatoire.`}
+  if(!pro&&scope!=="asso") sub+=" Sans clients professionnels en France, vous êtes surtout concerné par la réception et l'e-reporting.";
+  return {M,emDate,fine,plan,s,cls,pill,title,sub,pro,part,ue,hue,btpST,needSetup};
+}
+
+/* ---------------- specimen ---------------- */
+const SAMPLES={btp:[["Fourniture : radiateur à inertie 1500 W",1,"u",420],["Main-d'œuvre : dépose et pose",4,"h",48]],artisan:[["Fabrication sur mesure",1,"u",380],["Main-d'œuvre",3,"h",45]],commerce:[["Produit référence A-102",10,"u",24],["Frais de livraison",1,"forfait",15]],services:[["Mission de conseil",2,"jour",550],["Frais de déplacement",1,"forfait",60]],sante:[["Séance de soins",5,"séance",45]],formation:[["Formation inter-entreprises",2,"jour",650]],liberal:[["Honoraires : mission d'accompagnement",1,"forfait",900]],restauration:[["Repas de groupe, menu du jour",12,"couvert",22],["Boissons",12,"u",4.5]],association:[["Prestation d'animation",1,"forfait",300]]};
+let current=null;
+function specimen(a,r){
+  const tv=a.tvaEff;const noVat=tv!=="normal"||r.btpST;
+  const rate=(a.activite==="btp"&&r.part&&!r.pro)||a.activite==="restauration"?10:20;
+  const lines=(SAMPLES[a.activite]||SAMPLES.services).map(([d,q,u,p])=>({d,q,u,p}));
+  const ht=lines.reduce((s,l)=>s+l.q*l.p,0);const tvaV=noVat?0:Math.round(ht*rate)/100;
+  const ident=a.statut==="societe"?"VOTRE SOCIÉTÉ SAS au capital de [ ] € · RCS [ville]":a.statut==="asso"?"VOTRE ASSOCIATION":"VOTRE NOM EI";
+  const exo=r.M.find(m=>m.t.startsWith("Mention « Exonération"));
+  const mentionTva=tv==="franchise"?"TVA non applicable, art. 293 B du CGI.":tv==="exonere"?((exo&&exo.t.match(/« (.*) »/)?.[1])||"Exonération de TVA")+".":r.btpST?"Autoliquidation – TVA due par le preneur (art. 283-2 nonies du CGI).":"";
+  const client=r.pro?{n:"CLIENT PROFESSIONNEL SAS",x:"SIREN [9 chiffres]"}:r.part?{n:"M. ou Mme CLIENT",x:"Client particulier"}:{n:"CLIENT ÉTRANGER",x:"N° TVA [ ]"};
+  current={a,r,lines,ht,tvaV,rate,noVat,ident,mentionTva,client};
+  const h=s=>`<span class="hl">${s}</span>`;
+  return `<div class="hd"><div><b>${ident}</b><br>[adresse]<br>SIRET [14 chiffres]${tv==="normal"||r.ue?" · TVA FR[ ]":""}${["btp","artisan"].includes(a.activite)?"<br>Assurance : [assureur, n° contrat, zone]":""}</div>
+  <div style="text-align:right"><h4>Facture</h4>N° [AAAA-0001]<br>Émise le [date]</div></div>
+  <div class="hd"><div><div class="lbl">Facturé à</div><b>${client.n}</b><br>[adresse]<br>${r.pro?h(client.x):client.x}</div>${r.pro?`<div><div class="lbl">${h("Livraison / intervention")}</div>[si différente]</div>`:""}</div>
+  ${r.pro?`<div>${h("Opération : "+{services:"prestation de services",biens:"livraison de biens",mixte:"biens et services"}[a.vente])}</div>`:""}
+  <table><thead><tr><th scope="col">Désignation</th><th scope="col" class="n">Qté</th><th scope="col" class="n">PU HT</th>${noVat?"":'<th scope="col" class="n">TVA</th>'}<th scope="col" class="n">Total HT</th></tr></thead><tbody>
+  ${lines.map(l=>`<tr><td>${esc(l.d)}</td><td class="n">${l.q} ${esc(l.u)}</td><td class="n">${num(l.p)}</td>${noVat?"":`<td class="n">${rate} %</td>`}<td class="n">${num(l.q*l.p)}</td></tr>`).join("")}</tbody></table>
+  <div style="justify-self:end;text-align:right">Total HT ${num(ht)} €${noVat?"":`<br>TVA ${rate} % ${num(tvaV)} €`}<br><b>Total ${noVat?"":"TTC "}${num(ht+tvaV)} €</b></div>
+  ${a.acomptes==="oui"?"<div>Acompte(s) déjà facturé(s) : [n° et montant] · Reste à payer : [ ]</div>":""}
+  <div class="legal">${mentionTva?`<span>${esc(mentionTva)}</span>`:""}<span>Échéance : [date]. Pénalités de retard : 3 fois le taux d'intérêt légal.${r.pro||r.ue||r.hue?" Indemnité forfaitaire de recouvrement : 40 €.":""} Pas d'escompte pour paiement anticipé.</span></div>`;
+}
+
+/* ---------------- render ---------------- */
+let extra=[];let touched=false;
+function render(){
+  const a=read();
+  Q.forEach(q=>{if(q.show)$("fs-"+q.id).hidden=!q.show(a)});
+  const r=engine(a);extra.forEach(x=>r.M.push(x));
+  $("arc").style.stroke=`var(--${r.cls})`;$("arc").setAttribute("stroke-dashoffset",(263.9*(1-r.s/100)).toFixed(1));$("score").textContent=r.s;
+  $("pill").className="pill "+r.cls;$("pill").textContent=r.pill;$("vTitle").textContent=r.title;$("vSub").textContent=r.sub;
+  $("kRec").textContent=fd(D26);$("kEm").textContent=r.pro?fd(r.emDate):"Non (e-reporting)";$("kFine").textContent=r.fine?num0(r.fine)+" €":"—";
+  $("hypo").hidden=!a.hyp;$("hypo").textContent=a.hyp;
+  const visible=Q.filter(q=>!q.show||q.show(a));const answered=visible.filter(q=>q.multi?form.querySelector(`input[name="${q.id}"]:checked`):form.querySelector(`input[name="${q.id}"]:checked`)).length;
+  $("qprog").textContent=`${answered} question${answered>1?"s":""} sur ${visible.length}`;
+  const lab={base:"Base",cas:"Votre cas","2027":"2027",ia:"IA"};const order={"2027":0,cas:1,ia:2,base:3};
+  $("ment").innerHTML=[...r.M].sort((x,y)=>order[x.cat]-order[y.cat]).map(m=>`<li><span class="tag t-${m.cat}">${lab[m.cat]}</span><span>${esc(m.t)}${m.why?`<small>${esc(m.why)}</small>`:""}</span></li>`).join("");
+  $("specimen").innerHTML=specimen(a,r);
+  $("plan").innerHTML=r.plan.map(p=>`<li>${esc(p)}</li>`).join("");
+  if(r.needSetup){$("recoT").textContent="On s'occupe de tout cela pour vous";$("recoP").textContent=`Mise en conformité complète pour ${num0(CFG.prix.conformite)} €, en une fois : plateforme, logiciel, modèles, fiches clients et facture test.`;$("recoBtn").setAttribute("href","#commande-conformite")}
+  else{$("recoT").textContent="Restez conforme sans y penser";$("recoP").textContent=`Votre outil est en place. Le suivi mensuel à ${num0(CFG.prix.suivi)} € surveille vos rejets, vos impayés et les changements de la loi.`;$("recoBtn").setAttribute("href","#commande-suivi")}
+  $("exBanner").hidden=touched;
+}
+form.addEventListener("change",()=>{touched=true;extra=[];render()});
+$("resetQ").onclick=()=>{form.querySelectorAll("input").forEach(i=>i.checked=false);touched=true;extra=[];render();form.querySelector("input")?.focus()};
+render();
+
+function ctxText(){
+  const {a,r}=current;
+  return `Activité: ${a.activite}; statut: ${a.statut}; TVA: ${a.tvaEff}${a.tva==="nsp"?" (déduite)":""}; clients: ${a.clients.join(", ")}; facture: ${a.vente}; acomptes: ${a.acomptes}; sous-traitance BTP: ${a.soustrait||"non"}; taille: ${a.taille}; outil: ${a.outil}; plateforme agréée: ${a.pa}; score ${r.s}/100.\nMentions retenues:\n${r.M.map(m=>"- "+m.t).join("\n")}`;
+}
+
+/* ---------------- downloads ---------------- */
+let downloads=null;
+function plainDownload(blob,name){const u=URL.createObjectURL(blob);const el=document.createElement("a");el.href=u;el.download=name;document.body.append(el);el.click();el.remove();setTimeout(()=>URL.revokeObjectURL(u),4000)}
+function buildXlsx(){
+  const {a,r,lines,rate,noVat,ident,mentionTva,client}=current;const X=window.XLSX;
+  const rows=[[ident],["[Adresse]"],["SIRET : [14 chiffres]"+(a.tvaEff==="normal"||r.ue?"   TVA : FR[ ]":"")],[],["FACTURE","","","N° :","[AAAA-0001]"],["","","","Date :","[JJ/MM/AAAA]"],[],
+    ["Facturé à :",client.n],["Adresse :","[adresse]"],[r.pro?"SIREN client :":"",r.pro?"[9 chiffres]":""],[r.pro?"Livraison :":"",r.pro?"[si différente]":""],[r.pro?"Opération :":"",r.pro?{services:"Prestation de services",biens:"Livraison de biens",mixte:"Biens et services"}[a.vente]:""],[],
+    ["Désignation","Quantité","Unité","PU HT","Taux TVA","Total HT"]];
+  const start=rows.length+1;
+  lines.forEach(l=>rows.push([l.d,l.q,l.u,l.p,noVat?0:rate/100,null]));
+  for(let i=0;i<4;i++)rows.push(["",null,"",null,noVat?0:rate/100,null]);
+  const end=rows.length;
+  rows.push([],["","","","Total HT",null,null],["","","","TVA",null,null],["","","","Total "+(noVat?"":"TTC"),null,null],[]);
+  if(mentionTva)rows.push([mentionTva]);
+  rows.push(["Échéance : [date]. Pénalités de retard : 3 fois le taux d'intérêt légal."+(r.pro||r.ue||r.hue?" Indemnité forfaitaire de recouvrement : 40 €.":"")+" Pas d'escompte pour paiement anticipé."]);
+  const ws=X.utils.aoa_to_sheet(rows);
+  for(let i=start;i<=end;i++){ws["F"+i]={t:"n",f:`IF(B${i}="","",B${i}*D${i})`,z:"#,##0.00"};["D","E"].forEach(c=>{if(ws[c+i]&&ws[c+i].t==="n")ws[c+i].z=c==="E"?"0%":"#,##0.00"})}
+  const tHT=end+2,tTVA=end+3,tTTC=end+4;
+  ws["F"+tHT]={t:"n",f:`SUM(F${start}:F${end})`,z:"#,##0.00"};
+  ws["F"+tTVA]={t:"n",f:`SUMPRODUCT(B${start}:B${end},D${start}:D${end},E${start}:E${end})`,z:"#,##0.00"};
+  ws["F"+tTTC]={t:"n",f:`F${tHT}+F${tTVA}`,z:"#,##0.00"};
+  ws["!cols"]=[{wch:44},{wch:10},{wch:9},{wch:12},{wch:10},{wch:14}];
+  const ws2=X.utils.aoa_to_sheet([["Catégorie","Mention obligatoire","Pourquoi"]].concat(r.M.map(m=>[{base:"Base",cas:"Votre cas","2027":"Nouvelle 2027",ia:"Ajout IA"}[m.cat],m.t,m.why||""])));
+  ws2["!cols"]=[{wch:16},{wch:80},{wch:60}];
+  const wb=X.utils.book_new();X.utils.book_append_sheet(wb,ws,"Facture");X.utils.book_append_sheet(wb,ws2,"Mentions obligatoires");
+  return new Blob([X.write(wb,{bookType:"xlsx",type:"array"})],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+}
+function buildPdf(){
+  const {a,r,lines,rate,noVat,ident,mentionTva,client,ht,tvaV}=current;const d=new window.jspdf.jsPDF({unit:"mm",format:"a4"});
+  const L=18,R=192;let y=20;
+  d.setFont("helvetica","bold");d.setFontSize(12);d.text(ident,L,y);d.setFontSize(22);d.setTextColor(29,78,216);d.text("FACTURE",R,y+2,{align:"right"});d.setTextColor(19,34,56);
+  d.setFont("helvetica","normal");d.setFontSize(9.5);
+  const idl=["[adresse]","SIRET [14 chiffres]"+(a.tvaEff==="normal"||r.ue?"  -  TVA FR[ ]":"")];if(["btp","artisan"].includes(a.activite))idl.push("Assurance : [assureur, n° contrat, zone couverte]");
+  d.text(idl,L,y+6);d.text(["N° [AAAA-0001]","Émise le [date]"],R,y+9,{align:"right"});
+  y=52;d.setFontSize(8);d.setTextColor(79,93,116);d.text("FACTURÉ À",L,y);if(r.pro)d.text("LIVRAISON / INTERVENTION",110,y);d.setTextColor(19,34,56);d.setFontSize(9.5);
+  d.text([client.n,"[adresse]",client.x],L,y+5);if(r.pro)d.text("[si différente de la facturation]",110,y+5);
+  y=74;if(r.pro){d.text("Opération : "+{services:"prestation de services",biens:"livraison de biens",mixte:"livraison de biens et prestation de services"}[a.vente],L,y);y+=8}
+  d.setFillColor(226,233,252);d.rect(L,y-5,R-L,8,"F");d.setFont("helvetica","bold");d.setFontSize(8.5);
+  const cols=noVat?[[L+2,"Désignation","left"],[135,"Qté","right"],[160,"PU HT","right"],[R-2,"Total HT","right"]]:[[L+2,"Désignation","left"],[118,"Qté","right"],[140,"PU HT","right"],[158,"TVA","right"],[R-2,"Total HT","right"]];
+  cols.forEach(([x,s,al])=>d.text(s,x,y,{align:al}));d.setFont("helvetica","normal");d.setFontSize(9.5);y+=8;
+  lines.forEach(l=>{const v=noVat?[`${l.q} ${l.u}`,num(l.p),num(l.q*l.p)]:[`${l.q} ${l.u}`,num(l.p),rate+" %",num(l.q*l.p)];d.text(l.d,L+2,y);v.forEach((s,i)=>d.text(s,cols[i+1][0],y,{align:"right"}));d.setDrawColor(214,221,232);d.line(L,y+2.5,R,y+2.5);y+=7.5});
+  y+=4;d.text("Total HT",140,y);d.text(num(ht)+" EUR",R-2,y,{align:"right"});if(!noVat){y+=5.5;d.text(`TVA ${rate} %`,140,y);d.text(num(tvaV)+" EUR",R-2,y,{align:"right"})}
+  y+=6.5;d.setFont("helvetica","bold");d.setFontSize(11.5);d.text(noVat?"Total":"Total TTC",140,y);d.text(num(ht+tvaV)+" EUR",R-2,y,{align:"right"});
+  d.setFont("helvetica","normal");d.setFontSize(8.5);d.setTextColor(79,93,116);
+  const lg=[];if(a.acomptes==="oui")lg.push("Acompte(s) déjà facturé(s) : [n° et montant]. Reste à payer : [ ].");if(mentionTva)lg.push(mentionTva);
+  lg.push("Échéance : [date]. Pénalités de retard : 3 fois le taux d'intérêt légal."+(r.pro||r.ue||r.hue?" Indemnité forfaitaire pour frais de recouvrement : 40 EUR.":"")+" Pas d'escompte pour paiement anticipé.");
+  d.text(d.splitTextToSize(lg.join("\n"),R-L),L,262);
+  d.addPage();d.setTextColor(19,34,56);d.setFont("helvetica","bold");d.setFontSize(14);d.text("Mentions obligatoires de votre modèle",L,22);d.setFont("helvetica","normal");d.setFontSize(9.5);y=32;
+  r.M.forEach(m=>{const t=d.splitTextToSize(`[${{base:"Base",cas:"Votre cas","2027":"2027",ia:"IA"}[m.cat]}] ${m.t}${m.why?" - "+m.why:""}`,R-L);if(y+t.length*4.6>282){d.addPage();y=22}d.text(t,L,y);y+=t.length*4.6+2});
+  d.setFontSize(8);d.setTextColor(79,93,116);d.text("Modèle offert par Cap Facture. Document d'information générale, à faire valider par votre expert-comptable.",L,290);
+  return d.output("blob");
+}
+async function save(kind){
+  let data;
+  try{data=kind==="xlsx"?(window.XLSX?buildXlsx():null):(window.jspdf?buildPdf():null)}catch{data=null}
+  if(!data){toast("Le module de téléchargement ne s'est pas chargé. Rechargez la page.");return}
+  const name=`modele-facture-cap-facture.${kind}`;
+  if(standalone){plainDownload(data,name);toast("Modèle téléchargé");return}
+  if(!downloads){toast("Le téléchargement n'est pas disponible dans cette vue.");return}
+  try{await downloads.save({filename:name,data});toast("Modèle téléchargé")}catch(e){if(e?.code!=="declined")toast("Téléchargement impossible pour le moment.")}
+}
+$("dlXlsx").onclick=()=>save("xlsx");$("dlPdf").onclick=()=>save("pdf");
+
+/* ---------------- AI ---------------- */
+let sample=null,ctl=null;const turns=[];
+const errCopy={not_granted:"Vous n'avez pas autorisé l'assistant IA. Le diagnostic reste complet sans lui.",sampling_disabled:"L'assistant IA n'est pas disponible pour votre compte.",rate_limited:"Trop de demandes d'un coup. Réessayez dans un instant.",invalid_json:"L'IA n'a pas renvoyé de réponse exploitable. Reformulez puis réessayez.",refused:"L'IA n'a pas pu traiter cette demande. Reformulez-la.",session_expired:"Votre session a expiré. Reconnectez-vous."};
+const RULES="Tu es l'assistant du site Cap Facture, qui aide les TPE, artisans et indépendants français à se mettre en conformité avec la facturation électronique (réception obligatoire au 1er septembre 2026 ; émission au 1er septembre 2026 pour les grandes entreprises et ETI, au 1er septembre 2027 pour les PME et micro-entreprises ; nouvelles mentions : SIREN du client, adresse de livraison, nature de l'opération, option TVA sur les débits ; e-reporting pour les ventes aux particuliers et à l'étranger ; amende de 15 € par facture, plafonnée à 15 000 € par an). Réponds en français simple, sans jargon, en 150 mots maximum. Cite l'article du CGI quand tu donnes une mention fiscale. Si tu n'es pas sûr, dis-le et conseille de vérifier avec un expert-comptable. Ne donne jamais de montant d'impôt précis. Si la question sort de la facturation, ramène poliment au sujet. Quand c'est utile, rappelle que Cap Facture propose une mise en conformité complète et un suivi mensuel.";
+function busy(on){["caseBtn","explainBtn","chatBtn"].forEach(id=>$(id).disabled=on);$("aiStop").hidden=!on}
+function aiFail(e){if(e?.code==="cancelled")return;$("aiErr").textContent=errCopy[e?.code]||"L'IA n'a pas répondu. Réessayez dans un instant.";if(["not_granted","sampling_disabled","not_declared"].includes(e?.code)){$("aiCard").hidden=true;$("aiOff").hidden=false}}
+$("aiStop").onclick=()=>ctl?.abort();
+$("explainBtn").onclick=async()=>{
+  if(!sample)return;ctl=new AbortController();busy(true);$("aiErr").textContent="";$("aiOut").textContent="Analyse de votre situation…";
+  try{await sample(`${RULES}\n\nExplique à ce chef d'entreprise, en 3 courts paragraphes : ce qui change pour lui, ce qu'il doit faire en priorité, et le point particulier de sa situation à surveiller.\n\nSa situation :\n${ctxText()}`,{signal:ctl.signal,onText:({text})=>$("aiOut").textContent=text})}
+  catch(e){$("aiOut").textContent=e?.text||"";aiFail(e)}finally{busy(false)}
+};
+$("caseBtn").onclick=async()=>{
+  const txt=$("caseTxt").value.trim();if(!txt){$("aiErr").textContent="Décrivez d'abord votre situation.";$("caseTxt").focus();return}
+  if(!sample)return;ctl=new AbortController();busy(true);$("aiErr").textContent="";$("aiOut").textContent="L'IA analyse votre cas particulier…";
+  try{
+    const res=await sample.json(`${RULES}\n\nUn chef d'entreprise a rempli notre diagnostic. Voici sa situation et les mentions déjà retenues pour son modèle de facture :\n${ctxText()}\n\nIl précise son cas particulier :\n"""${txt.slice(0,3000)}"""\n\nDétermine les mentions obligatoires SUPPLÉMENTAIRES à ajouter à son modèle de facture (n'en répète aucune déjà retenue) et une explication courte. Si une mention est incertaine, indique-le dans "pourquoi". Réponds uniquement avec ce JSON :\n{"mentions":[{"texte":"mention à ajouter","pourquoi":"raison courte, avec l'article si possible"}],"explication":"3 phrases maximum","a_verifier":true}`,{signal:ctl.signal,cache:false});
+    const ms=(Array.isArray(res?.mentions)?res.mentions:[]).filter(m=>m&&m.texte).slice(0,8);
+    extra=ms.map(m=>({cat:"ia",t:String(m.texte),why:String(m.pourquoi||"")}));render();
+    $("aiOut").textContent=(res?.explication?String(res.explication)+"\n\n":"")+(ms.length?`${ms.length} mention${ms.length>1?"s":""} ajoutée${ms.length>1?"s":""} à votre modèle (étiquette IA).`:"Aucune mention supplémentaire : votre modèle couvre déjà ce cas.")+(res?.a_verifier?"\nÀ faire valider par votre expert-comptable.":"");
+  }catch(e){$("aiOut").textContent="";aiFail(e)}finally{busy(false)}
+};
+$("chatForm").addEventListener("submit",async e=>{
+  e.preventDefault();const q=$("chatIn").value.trim();if(!q||!sample)return;$("chatIn").value="";$("aiErr").textContent="";
+  turns.push({role:"user",content:q});const box=$("chat");
+  const u=document.createElement("div");u.className="msg u";u.textContent=q;box.append(u);
+  const b=document.createElement("div");b.className="msg a";b.textContent="…";box.append(b);box.scrollTop=box.scrollHeight;
+  ctl=new AbortController();busy(true);
+  try{const {text}=await sample([{role:"user",content:RULES+"\n\nSituation du visiteur :\n"+ctxText()+"\n\nRéponds à ses questions."},...turns.slice(-10)],{signal:ctl.signal,cache:false,onText:({text})=>{b.textContent=text;box.scrollTop=box.scrollHeight}});turns.push({role:"assistant",content:text})}
+  catch(err){b.textContent=err?.text||"Pas de réponse.";aiFail(err)}finally{busy(false)}
+});
+
+/* ---------------- forms ---------------- */
+const enc=o=>Object.keys(o).map(k=>encodeURIComponent(k)+"="+encodeURIComponent(o[k]??"")).join("&");
+function setErr(id,msg){const el=$(id);el.setAttribute("aria-invalid",msg?"true":"false");$(id+"-e").textContent=msg||""}
+const isMail=v=>/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
+async function postNetlify(formEl){
+  const data=Object.fromEntries(new FormData(formEl));
+  const r=await fetch("/",{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:enc(data)});
+  if(!r.ok)throw new Error("http "+r.status);
+}
+$("contactForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const nom=$("c-nom").value.trim(),mail=$("c-mail").value.trim(),msg=$("c-msg").value.trim();
+  setErr("c-nom",nom?"":"Indiquez votre nom.");setErr("c-mail",isMail(mail)?"":"Indiquez une adresse email valide, par exemple nom@domaine.fr.");setErr("c-msg",msg?"":"Écrivez votre message.");
+  const bad=[["c-nom",nom],["c-mail",isMail(mail)],["c-msg",msg]].find(x=>!x[1]);if(bad){$(bad[0]).focus();return}
+  $("c-diag").value=$("c-joint").checked&&touched?ctxText():"";
+  if(!standalone){$("c-done").innerHTML=`<div class="done">Aperçu : une fois le site en ligne, ce message nous sera envoyé.</div>`;return}
+  $("c-send").disabled=true;
+  try{await postNetlify($("contactForm"));$("contactForm").reset();$("c-done").innerHTML=`<div class="done"><b>Message envoyé.</b> Nous vous répondons sous 48 h ouvrées.</div>`}
+  catch{$("c-done").innerHTML=`<p class="err">L'envoi n'a pas abouti. Réessayez, ou écrivez-nous directement${CFG.email?" à "+esc(CFG.email):""}.</p>`}
+  finally{$("c-send").disabled=false}
+});
+
+/* ---------------- order ---------------- */
+const OFFERS={
+  conformite:{t:"Mise en conformité",per:"en une fois",l:["Choix et inscription à la plateforme agréée","Paramétrage de votre logiciel et de vos modèles","Import et vérification de vos fiches clients","Facture test validée","1 h de prise en main"]},
+  suivi:{t:"Suivi mensuel",per:"par mois, sans engagement",l:["Surveillance des factures rejetées","Relance de vos impayés","Vérification de l'archivage","Modèles mis à jour si la loi change","Assistance sous 48 h ouvrées"]}
+};
+let offer="conformite";
+function setupOrder(o){
+  offer=o;const O=OFFERS[o];
+  $("o-offre").value=O.t;$("r-t").textContent=O.t;$("r-p").textContent=num0(CFG.prix[o]);$("r-per").textContent=O.per;$("r-l").innerHTML=O.l.map(x=>`<li>${esc(x)}</li>`).join("");
+  const link=CFG.liensPaiement[o];
+  $("o-pay").textContent=link?`Commander avec obligation de paiement · ${num0(CFG.prix[o])} €${o==="suivi"?" / mois":""}`:"Envoyer ma commande";
+  $("o-note").textContent=link?"Vous allez être redirigé vers une page de paiement sécurisée. Nous ne voyons jamais vos coordonnées bancaires.":"Nous vous envoyons sous 24 h ouvrées un lien de paiement sécurisé pour confirmer votre commande.";
+  $("o-done").innerHTML="";
+}
+function custType(){const p=$("o-part").checked;$("o-ent-w").hidden=p;$("o-siren-w").hidden=p;$("o-exec-w").hidden=!p}
+$("o-pro").onchange=custType;$("o-part").onchange=custType;custType();
+$("orderForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const part=$("o-part").checked;
+  const v={nom:$("o-nom").value.trim(),ent:$("o-ent").value.trim(),mail:$("o-mail").value.trim(),tel:$("o-tel").value.trim(),siren:$("o-siren").value.replace(/\s/g,""),adr:$("o-adr").value.trim()};
+  setErr("o-nom",v.nom?"":"Indiquez votre nom et prénom.");
+  setErr("o-ent",part||v.ent?"":"Indiquez le nom de votre entreprise.");
+  setErr("o-mail",isMail(v.mail)?"":"Indiquez une adresse email valide, par exemple nom@domaine.fr.");
+  setErr("o-tel",v.tel.replace(/\D/g,"").length>=9?"":"Indiquez un numéro de téléphone, pour fixer le rendez-vous.");
+  setErr("o-siren",!v.siren||/^\d{9}$/.test(v.siren)?"":"Le SIREN compte 9 chiffres. Laissez vide si vous ne l'avez pas sous la main.");
+  setErr("o-adr",v.adr?"":"Indiquez votre adresse de facturation.");
+  $("o-cgv-e").textContent=$("o-cgv").checked?"":"Acceptez les conditions générales de vente pour continuer.";$("o-cgv").setAttribute("aria-invalid",!$("o-cgv").checked);
+  const bad=["o-nom","o-ent","o-mail","o-tel","o-siren","o-adr","o-cgv"].find(id=>$(id).getAttribute("aria-invalid")==="true"&&!$(id).closest("[hidden]"));
+  if(bad){$(bad).focus();return}
+  const ref="CF-"+Date.now().toString(36).toUpperCase()+"-"+Math.random().toString(36).slice(2,6).toUpperCase();
+  $("o-ref").value=ref;$("o-diag").value=touched?ctxText():"";
+  const link=CFG.liensPaiement[offer];
+  if(!standalone){$("o-done").innerHTML=`<div class="done">Aperçu : une fois le site en ligne, la commande nous sera transmise${link?" puis le client sera redirigé vers la page de paiement":""}.</div>`;return}
+  $("o-pay").disabled=true;
+  try{await postNetlify($("orderForm"))}catch{ if(!link){$("o-done").innerHTML=`<p class="err">L'envoi n'a pas abouti. Réessayez dans un instant.</p>`;$("o-pay").disabled=false;return} }
+  if(link){
+    const u=new URL(link);u.searchParams.set("prefilled_email",v.mail);u.searchParams.set("client_reference_id",ref);
+    location.href=u.toString();
+  }else{
+    $("orderForm").reset();custType();
+    $("o-done").innerHTML=`<div class="done"><b>Commande reçue (réf. ${esc(ref)}).</b> Nous vous envoyons le lien de paiement sécurisé sous 24 h ouvrées, puis nous fixons ensemble le premier rendez-vous.</div>`;
+    $("o-pay").disabled=false;
+  }
+});
+
+/* ---------------- copy ---------------- */
+$("copyMail").onclick=async()=>{if(!CFG.email){toast("L'adresse email n'est pas encore renseignée.");return}try{await navigator.clipboard.writeText(CFG.email);toast("Adresse copiée")}catch{const r=document.createRange();r.selectNodeContents($("mailTxt"));const s=getSelection();s.removeAllRanges();s.addRange(r);toast("Adresse sélectionnée : copiez-la")}};
+
+/* ---------------- routing ---------------- */
+const VIEWS=["mentions-legales","confidentialite","cgv","cookies","commande","merci"];
+function route(){
+  let h=location.hash.slice(1);
+  if(h==="commande-conformite"||h==="commande-suivi"){setupOrder(h.split("-")[1]);h="commande"}
+  const isView=VIEWS.includes(h);
+  $("home").hidden=isView;VIEWS.forEach(id=>$(id).hidden=id!==h);
+  if(isView){window.scrollTo(0,0);$(h).querySelector("h1")?.setAttribute("tabindex","-1");$(h).querySelector("h1")?.focus({preventScroll:true})}
+  else if(h&&h!=="accueil"){const el=document.getElementById(h);if(el)requestAnimationFrame(()=>el.scrollIntoView())}
+  else if(h==="accueil")window.scrollTo(0,0);
+}
+addEventListener("hashchange",route);route();
+
+/* ---------------- capabilities ---------------- */
+(async()=>{
+  const C=window.claude;
+  if(!C?.use){standalone=true;$("aiCard").hidden=true;$("aiOff").hidden=false;return}
+  const [s,dl]=await Promise.all([C.use("sample"),C.use("downloads")]);
+  sample=s;downloads=dl;
+  if(!sample){$("aiCard").hidden=true;$("aiOff").hidden=false}
+  if(!downloads)$("dlRow").hidden=true;
+})();
+</script>
+
+</body></html>
